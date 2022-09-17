@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Infrastructure;
+using GameStore.BLL.Infrastructure.Exceptions;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
@@ -110,7 +111,7 @@ namespace GameStore.BLL.Services
 
             if (!file.ContentType.Contains("image"))
             {
-                throw new GameStoreException("You should send an image.");
+                throw new InvalidFileContentTypeException();
             }
 
             if (game == null)

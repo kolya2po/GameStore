@@ -23,6 +23,8 @@ namespace GameStore.WebApi
         {
             services.AddData(Configuration);
             services.AddBusiness();
+            services.AddAndConfigureIdentityWithJwtToken(Configuration);
+
             services.AddAutoMapper(opt => opt.AddProfile(new AutoMapperProfile()));
 
             services.AddControllers();

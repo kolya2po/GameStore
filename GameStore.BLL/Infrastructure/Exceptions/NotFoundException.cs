@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameStore.BLL.Infrastructure
+namespace GameStore.BLL.Infrastructure.Exceptions
 {
     public class NotFoundException : Exception
     {
@@ -8,7 +8,7 @@ namespace GameStore.BLL.Infrastructure
 
         protected NotFoundException(string message) : base(message)
         {
-            
+
         }
     }
 }

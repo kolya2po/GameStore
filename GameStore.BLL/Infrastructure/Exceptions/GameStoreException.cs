@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GameStore.BLL.Infrastructure
+namespace GameStore.BLL.Infrastructure.Exceptions
 {
     public class GameStoreException : Exception
     {

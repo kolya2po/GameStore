@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using GameStore.BLL.Infrastructure;
+using GameStore.BLL.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
 
 namespace GameStore.WebApi.ErrorHandling
