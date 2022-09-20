@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -21,6 +22,7 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<GameModel>>> GetAll()
         {
             return Ok(await _gamesService.GetAllAsync());
@@ -30,12 +32,6 @@ namespace GameStore.WebApi.Controllers
         public async Task<ActionResult<GameModel>> GetById(int id)
         {
             return Ok(await _gamesService.GetByIdAsync(id));
-        }
-
-        [HttpGet("filter")]
-        public async Task<ActionResult<IEnumerable<GameModel>>> GetByFilter(FilterSearchModel model)
-        {
-            return Ok(await _gamesService.GetGamesByFilterAsync(model));
         }
 
         [HttpPost]
