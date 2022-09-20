@@ -25,11 +25,6 @@ namespace GameStore.WebApi.ErrorHandling
             {
                 await _requestDelegate(context);
             }
-            catch (NotFoundException ex)
-            {
-                context.Response.StatusCode = ex.StatusCode;
-                await context.Response.WriteAsync(ex.Message);
-            }
             catch (GameStoreException ex)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
