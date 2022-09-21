@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Infrastructure;
-using GameStore.BLL.Infrastructure.Exceptions;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models.Identity;
 using GameStore.DAL.Entities;
@@ -32,11 +31,6 @@ namespace GameStore.BLL.Services
         public async Task<UserModel> GetByIdAsync(int id)
         {
             var user = await _userManager.FindByIdAsync(id.ToString());
-
-            if (user == null)
-            {
-                throw new UserNotFoundException($"User with id {id} doesn't exist.");
-            }
 
             return _mapper.Map<UserModel>(user);
         }
@@ -73,9 +67,8 @@ namespace GameStore.BLL.Services
 
             if (user == null)
             {
-                throw new UserNotFoundException($"User with username {model.UserName} doesn't exist.");
+                throw new GameStoreException($"User with username {model.UserName} doesn't exist.");
             }
-
             var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.IsPersistent, false);
 
             if (!result.Succeeded)
@@ -88,11 +81,9 @@ namespace GameStore.BLL.Services
             return new UserDto { UserId = user.Id, Token = token };
         }
 
-        public async Task AddAvatarAsync(int userId, IFormFile avatar, HttpRequest request)
+        public async Task AddAvatarAsync(User user, IFormFile avatar, HttpRequest request)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
-
-            ValidateParameters(user, userId, avatar);
+            ValidateFile(avatar);
 
             const string pathToFolder = @"D:\Items\Avatars";
             var format = avatar.FileName.Split('.')[^1];
@@ -125,13 +116,8 @@ namespace GameStore.BLL.Services
             return token;
         }
 
-        private static void ValidateParameters(User user, int userId, IFormFile avatar)
+        private static void ValidateFile(IFormFile avatar)
         {
-            if (user == null)
-            {
-                throw new UserNotFoundException($"User with id {userId} doesn't exist.");
-            }
-
             if (avatar == null)
             {
                 throw new GameStoreException("Avatar was null.");

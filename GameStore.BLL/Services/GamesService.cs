@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using GameStore.BLL.Infrastructure.Exceptions;
+using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
@@ -54,11 +53,9 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddImageAsync(int gameId, IFormFile image, HttpRequest request)
+        public async Task AddImageAsync(Game game, IFormFile image, HttpRequest request)
         {
-            var game = await UnitOfWork.GamesRepository.GetByIdAsync(gameId);
-
-            ValidateParameters(game, gameId, image);
+            ValidateFile(image);
 
             var imageFormat = image.FileName.Split('.')[^1];
             const string pathToFolder = @"D:\Items";
@@ -78,7 +75,7 @@ namespace GameStore.BLL.Services
         }
 
 
-        private static void ValidateParameters(Game game, int gameId, IFormFile file)
+        private static void ValidateFile(IFormFile file)
         {
             if (file == null)
             {
@@ -87,12 +84,7 @@ namespace GameStore.BLL.Services
 
             if (!file.ContentType.Contains("image"))
             {
-                throw new InvalidFileContentTypeException();
-            }
-
-            if (game == null)
-            {
-                throw new GameNotFoundException(gameId);
+                throw new GameStoreException("You should send an image.");
             }
         }
     }

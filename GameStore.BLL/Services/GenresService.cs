@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using GameStore.BLL.Infrastructure.Exceptions;
+using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
@@ -51,57 +51,38 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddGenreToGameAsync(int gameId, int genreId)
+         public async Task AddGenreToGameAsync(GameModel gameModel, GenreModel genreModel)
         {
-            await ValidateIfGameExists(gameId);
-            await ValidateIfGenreExistsAndIfItsNotParent(genreId);
-            await ValidateIfGameAlreadyHasGenre(gameId, genreId);
+            if (genreModel.ParentGenreId == null && genreModel.SubGenres.Any())
+            {
+                throw new GameStoreException("You cannot assign a parent genre to the game.");
+            }
+
+            await ValidateIfGameAlreadyHasGenre(gameModel.Id, genreModel.Id);
            
             var gameGenre = new GameGenre
             {
-                GameId = gameId,
-                GenreId = genreId
+                GameId = gameModel.Id,
+                GenreId = genreModel.Id
             };
 
             await UnitOfWork.GameGenresRepository.CreateAsync(gameGenre);
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async Task RemoveGenreFromGameAsync(int gameId, int genreId)
+        public async Task RemoveGenreFromGameAsync(GameModel gameModel, GenreModel genreModel)
         {
-            await ValidateIfGameExists(gameId);
-            await ValidateIfGenreExistsAndIfItsNotParent(genreId);
-            await ValidateIfGameDoesNotHaveGenre(gameId, genreId);
-
-            var gameGenre = await UnitOfWork.GameGenresRepository.GetByIdAsync(gameId, genreId);
-
-            UnitOfWork.GameGenresRepository.Delete(gameGenre);
-            await UnitOfWork.SaveChangesAsync();
-        }
-
-        private async Task ValidateIfGameExists(int gameId)
-        {
-            var game = await UnitOfWork.GamesRepository.GetByIdAsync(gameId);
-
-            if (game == null)
-            {
-                throw new GameNotFoundException(gameId);
-            }
-        }
-
-        private async Task ValidateIfGenreExistsAndIfItsNotParent(int genreId)
-        {
-            var genre = await UnitOfWork.GenresRepository.GetByIdWithDetailsAsync(genreId);
-
-            if (genre == null)
-            {
-                throw new GenreNotFoundException(genreId);
-            }
-
-            if (genre.ParentGenreId == null && genre.SubGenres.Any())
+            if (genreModel.ParentGenreId == null && genreModel.SubGenres.Any())
             {
                 throw new GameStoreException("You cannot assign a parent genre to the game.");
             }
+
+            await ValidateIfGameDoesNotHaveGenre(gameModel.Id, genreModel.Id);
+
+            var gameGenre = await UnitOfWork.GameGenresRepository.GetByIdAsync(gameModel.Id, genreModel.Id);
+
+            UnitOfWork.GameGenresRepository.Delete(gameGenre);
+            await UnitOfWork.SaveChangesAsync();
         }
 
         private async Task ValidateIfGameAlreadyHasGenre(int gameId, int genreId)

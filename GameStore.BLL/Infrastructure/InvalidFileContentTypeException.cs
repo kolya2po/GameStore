@@ -1,10 +1,9 @@
-﻿using System;
-
-namespace GameStore.BLL.Infrastructure.Exceptions
+﻿namespace GameStore.BLL.Infrastructure
 {
     public class InvalidFileContentTypeException : GameStoreException
     {
         public InvalidFileContentTypeException() :
-            base("You should send an image.") { }
+            base("You should send an image.")
+        { }
     }
 }
