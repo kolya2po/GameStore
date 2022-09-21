@@ -11,9 +11,16 @@ namespace GameStore.BLL.Services
     {
         public CommentsService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) {  }
 
+        public async Task<CommentModel> GetByIdAsync(int id)
+        {
+            var comment = await UnitOfWork.CommentsRepository.GetByIdAsync(id);
+            return Mapper.Map<CommentModel>(comment);
+        }
+
         // Should I return created comment from db? 
         // Because I need to have comment with id on the client 
         // to have possibility to make reply.
+        
         public async Task<CommentModel> ReplyToCommentAsync(CommentModel parentComment, CommentModel reply)
         {
             var comment = Mapper.Map<Comment>(reply);
