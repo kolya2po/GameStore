@@ -10,6 +10,8 @@ namespace GameStore.WebApi.Models.Comments
         [Required(ErrorMessage = "Game's id is required.")]
         public int GameId { get; set; }
 
+        [Required(ErrorMessage = "Author's id is required.")]
+        public int AuthorId { get; set; }
         public int? ParentCommentId { get; set; }
     }
 }
