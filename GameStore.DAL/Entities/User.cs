@@ -9,5 +9,6 @@ namespace GameStore.DAL.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public IEnumerable<Game> CreatedGames { get; set; }
+        public IEnumerable<Comment> CreatedComments { get; set; }
     }
 }
