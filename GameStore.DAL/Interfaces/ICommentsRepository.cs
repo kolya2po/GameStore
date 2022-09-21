@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GameStore.DAL.Entities;
 
 namespace GameStore.DAL.Interfaces
 {
-    public interface ICommentsRepository : IRepository<Comment>
+    public interface ICommentsRepository
     {
-        Task<IEnumerable<Comment>> GetAllWithDetailsAsync();
-        Task<Comment> GetByIdWithDetailsAsync(int id);
+        Task<Comment> GetByIdAsync(int id);
+        Task CreateAsync(Comment comment);
+        Task DeleteByIdAsync(int id);
+        void Update(Comment comment);
     }
 }

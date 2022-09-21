@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +7,7 @@ namespace GameStore.DAL.Repositories
 {
     public class CommentsRepository : BaseRepository, ICommentsRepository
     {
-        public CommentsRepository(GameStoreDbContext dbContext) : base(dbContext) {  }
+        public CommentsRepository(GameStoreDbContext dbContext) : base(dbContext) { }
 
         public async Task<Comment> GetByIdAsync(int id)
         {
@@ -17,19 +16,9 @@ namespace GameStore.DAL.Repositories
             return comment;
         }
 
-        public async Task<IEnumerable<Comment>> GetAllAsync()
+        public async Task CreateAsync(Comment comment)
         {
-            return await DbContext.Comments.ToListAsync();
-        }
-
-        public async Task CreateAsync(Comment entity)
-        {
-            await DbContext.Comments.AddAsync(entity);
-        }
-
-        public void Delete(Comment entity)
-        {
-            DbContext.Comments.Remove(entity);
+            await DbContext.Comments.AddAsync(comment);
         }
 
         public async Task DeleteByIdAsync(int id)
@@ -45,22 +34,6 @@ namespace GameStore.DAL.Repositories
         public void Update(Comment entity)
         {
             DbContext.Comments.Update(entity);
-        }
-
-        public async Task<IEnumerable<Comment>> GetAllWithDetailsAsync()
-        {
-            return await DbContext.Comments
-                .Include(c => c.Author)
-                .Include(c => c.Replies)
-                .ToListAsync();
-        }
-
-        public async Task<Comment> GetByIdWithDetailsAsync(int id)
-        {
-            return await DbContext.Comments
-                .Include(c => c.Author)
-                .Include(c => c.Replies)
-                .FirstOrDefaultAsync(c => c.Id == id);
         }
     }
 }
