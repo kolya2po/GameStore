@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -21,6 +22,7 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<GameModel>>> GetAll()
         {
             return Ok(await _gamesService.GetAllAsync());
@@ -30,12 +32,6 @@ namespace GameStore.WebApi.Controllers
         public async Task<ActionResult<GameModel>> GetById(int id)
         {
             return Ok(await _gamesService.GetByIdAsync(id));
-        }
-
-        [HttpGet("search-by-filter")]
-        public async Task<ActionResult<IEnumerable<GameModel>>> GetByFilter(FilterSearchModel model)
-        {
-            return Ok(await _gamesService.GetGamesByFilterAsync(model));
         }
 
         [HttpPost]
@@ -53,7 +49,7 @@ namespace GameStore.WebApi.Controllers
             await _gamesService.UpdateAsync(gameModel);
         }
 
-        [HttpPost("{gameId:int}/add-image")]
+        [HttpPost("{gameId:int}/image")]
         public async Task AddImage(int gameId, IFormFile image)
         {
             await _gamesService.AddImageAsync(gameId, image, Request);
@@ -65,13 +61,13 @@ namespace GameStore.WebApi.Controllers
             await _gamesService.DeleteAsync(id);
         }
 
-        [HttpPost("{gameId:int}/add-genre/{genreId:int}")]
+        [HttpPost("{gameId:int}/genre/{genreId:int}")]
         public async Task AddGenre(int gameId, int genreId)
         {
             await _genresService.AddGenreToGameAsync(gameId, genreId);
         }
 
-        [HttpDelete("{gameId:int}/remove-genre/{genreId:int}")]
+        [HttpDelete("{gameId:int}/genre/{genreId:int}")]
         public async Task RemoveGenre(int gameId, int genreId)
         {
             await _genresService.RemoveGenreFromGameAsync(gameId, genreId);

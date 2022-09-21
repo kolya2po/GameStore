@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Infrastructure.Exceptions;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
@@ -78,29 +77,6 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<GameModel>> GetGamesByFilterAsync(FilterSearchModel filterModel)
-        {
-            if (filterModel == null)
-            {
-                throw new GameStoreException("Filter model was null.");
-            }
-
-            var games = await UnitOfWork.GamesRepository.GetAllWithDetailsAsync();
-
-            var result = Mapper.Map<IEnumerable<GameModel>>(games);
-
-            if (filterModel.Genres != null && filterModel.Genres.Any())
-            {
-                result = await GetGamesByGenresAsync(filterModel.Genres);
-            }
-
-            if (!string.IsNullOrEmpty(filterModel.GameName))
-            {
-                result = result.Where(c => c.Name.Contains(filterModel.GameName));
-            }
-
-            return result;
-        }
 
         private static void ValidateParameters(Game game, int gameId, IFormFile file)
         {
@@ -118,29 +94,6 @@ namespace GameStore.BLL.Services
             {
                 throw new GameNotFoundException(gameId);
             }
-        }
-        private async Task<IEnumerable<GameModel>> GetGamesByGenresAsync(IEnumerable<string> genresToFind)
-        {
-            genresToFind = genresToFind.Select(c => c.ToLower());
-
-            var allGenres = await UnitOfWork.GenresRepository.GetAllWithDetailsAsync();
-
-            var genres = allGenres.Where(c => genresToFind.Contains(c.Name.ToLower())).ToArray();
-
-            var gamesFromGenres = genres
-                .Where(c => c.Games != null)
-                .SelectMany(c => c.Games)
-                .Select(c => c.Game);
-
-            var gamesFromSubGenres = genres
-                .Where(c => c.Games == null)
-                .SelectMany(c => c.SubGenres)
-                .SelectMany(c => c.Games)
-                .Select(c => c.Game);
-
-            var games = gamesFromGenres.Union(gamesFromSubGenres);
-
-            return Mapper.Map<IEnumerable<GameModel>>(games);
         }
     }
 }

@@ -4,6 +4,7 @@ using GameStore.WebApi.ErrorHandling;
 using GameStore.WebApi.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +28,11 @@ namespace GameStore.WebApi
 
             services.AddAutoMapper(opt => opt.AddProfile(new AutoMapperProfile()));
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddOData(opt =>
+                {
+                    opt.Select().Filter();
+                });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -35,6 +40,12 @@ namespace GameStore.WebApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(opt =>
+                {
+                    opt.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    opt.RoutePrefix = string.Empty;
+                });
             }
 
             app.UseStaticFiles();
