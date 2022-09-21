@@ -33,6 +33,8 @@ namespace GameStore.WebApi
                 {
                     opt.Select().Filter();
                 });
+
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
