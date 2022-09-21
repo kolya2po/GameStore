@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameStore.BLL.Interfaces;
+using GameStore.WebApi.Models.Genres;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -36,7 +37,7 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<GenreModel>> Create(CreateGameDto createGenreDto)
+        public async Task<ActionResult<GenreModel>> Create(CreateGenreDto createGenreDto)
         {
             var genreModel = Mapper.Map<GenreModel>(createGenreDto);
 
@@ -44,7 +45,7 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(UpdateGameDto updateGenreDto)
+        public async Task<ActionResult> Update(UpdateGenreDto updateGenreDto)
         {
             var genre = await _genresService.GetByIdAsync(updateGenreDto.Id);
 
