@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GameStore.BLL.Services
 {
@@ -51,7 +51,7 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-         public async Task AddGenreToGameAsync(GameModel gameModel, GenreModel genreModel)
+        public async Task AddGenreToGameAsync(GameModel gameModel, GenreModel genreModel)
         {
             if (genreModel.ParentGenreId == null && genreModel.SubGenres.Any())
             {
@@ -59,7 +59,7 @@ namespace GameStore.BLL.Services
             }
 
             await ValidateIfGameAlreadyHasGenre(gameModel.Id, genreModel.Id);
-           
+
             var gameGenre = new GameGenre
             {
                 GameId = gameModel.Id,

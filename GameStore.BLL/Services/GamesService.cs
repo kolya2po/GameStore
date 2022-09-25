@@ -74,7 +74,6 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-
         private static void ValidateFile(IFormFile file)
         {
             if (file == null)

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.WebApi.Models.Games;
@@ -6,9 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.OData.Query;
 using GameStore.DAL.Entities;
-using System;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace GameStore.WebApi.Controllers
 {
