@@ -1,12 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameStore.BLL.Services
 {
@@ -68,6 +68,8 @@ namespace GameStore.BLL.Services
 
             await UnitOfWork.GameGenresRepository.CreateAsync(gameGenre);
             await UnitOfWork.SaveChangesAsync();
+
+
         }
 
         public async Task RemoveGenreFromGameAsync(GameModel gameModel, GenreModel genreModel)
