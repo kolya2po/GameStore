@@ -59,7 +59,7 @@ namespace GameStore.BLL.Services
             }
 
             await ValidateIfGameAlreadyHasGenre(gameModel.Id, genreModel.Id);
-
+           
             var gameGenre = new GameGenre
             {
                 GameId = gameModel.Id,
@@ -68,8 +68,6 @@ namespace GameStore.BLL.Services
 
             await UnitOfWork.GameGenresRepository.CreateAsync(gameGenre);
             await UnitOfWork.SaveChangesAsync();
-
-
         }
 
         public async Task RemoveGenreFromGameAsync(GameModel gameModel, GenreModel genreModel)
