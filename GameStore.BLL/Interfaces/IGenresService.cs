@@ -5,7 +5,7 @@ namespace GameStore.BLL.Interfaces
 {
     public interface IGenresService : ICrud<GenreModel>
     {
-        Task AddGenreToGameAsync(int gameId, int genreId);
-        Task RemoveGenreFromGameAsync(int gameId, int genreId);
+        Task AddGenreToGameAsync(GameModel gameModel, GenreModel genreModel);
+        Task RemoveGenreFromGameAsync(GameModel gameModel, GenreModel genreModel);
     }
 }
