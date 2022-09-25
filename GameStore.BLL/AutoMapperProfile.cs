@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using AutoMapper;
 using GameStore.BLL.Models;
 using GameStore.BLL.Models.Identity;
@@ -23,7 +24,7 @@ namespace GameStore.BLL
                 .ForMember(dst => dst.CreationDate,
                     opt =>
                     opt.MapFrom(src =>
-                        (DateTime.Now - src.CreationDate).ToString()))
+                       src.CreationDate.ToString(Thread.CurrentThread.CurrentCulture)))
                 .ReverseMap();
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
+using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
-using GameStore.BLL.Services;
 using GameStore.WebApi.Models.Comments;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,18 +9,18 @@ namespace GameStore.WebApi.Controllers
 {
     public class CommentsController : BaseController
     {
-        private readonly GamesService _gamesService;
-        private readonly CommentsService _commentsService;
-        public CommentsController(IMapper mapper, GamesService gamesService, CommentsService commentsService) : base(mapper)
+        private readonly IGamesService _gamesService;
+        private readonly ICommentsService _commentsService;
+        public CommentsController(IMapper mapper, IGamesService gamesService, ICommentsService commentsService) : base(mapper)
         {
             _gamesService = gamesService;
             _commentsService = commentsService;
         }
 
-        [HttpPost("game/{gameId:int}")]
-        public async Task<ActionResult<CommentModel>> CreateCommentForGame(int gameId, CreateCommentDto commentDto)
+        [HttpPost]
+        public async Task<ActionResult<CommentModel>> CreateCommentForGame(CreateCommentDto commentDto)
         {
-            var gameModel = await _gamesService.GetByIdAsync(gameId);
+            var gameModel = await _gamesService.GetByIdAsync(commentDto.GameId);
 
             if (gameModel == null)
             {
