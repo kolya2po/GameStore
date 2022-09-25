@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
@@ -25,6 +26,7 @@ namespace GameStore.BLL.Services
         {
             var comment = Mapper.Map<Comment>(reply);
             comment.ParentCommentId = parentComment.Id;
+            comment.CreationDate = DateTime.Now;
 
             await UnitOfWork.CommentsRepository.CreateAsync(comment);
             await UnitOfWork.SaveChangesAsync();

@@ -12,6 +12,7 @@ namespace GameStore.WebApi.Controllers
     public class GenresController : BaseController
     {
         private readonly IGenresService _genresService;
+
         public GenresController(IMapper mapper, IGenresService genresService) : base(mapper)
         {
             _genresService = genresService;
@@ -39,7 +40,13 @@ namespace GameStore.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<GenreModel>> Create(CreateGenreDto createGenreDto)
         {
+            if (await ParentGenreDoesntExistAsync(createGenreDto.ParentGenreId))
+            {
+                return NotFound("Parent genre doesn't exist.");
+            }
+
             var genreModel = Mapper.Map<GenreModel>(createGenreDto);
+
 
             return Ok(await _genresService.CreateAsync(genreModel));
         }
@@ -65,6 +72,18 @@ namespace GameStore.WebApi.Controllers
         {
             await _genresService.DeleteAsync(id);
             return NoContent();
+        }
+
+        private async Task<bool> ParentGenreDoesntExistAsync(int? parentId)
+        {
+            if (!parentId.HasValue)
+            {
+                return false;
+            }
+
+            var parent = await _genresService.GetByIdAsync(parentId.Value);
+
+            return parent == null;
         }
     }
 }

@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.OData.Query;
 using GameStore.DAL.Entities;
-using System;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -80,7 +79,7 @@ namespace GameStore.WebApi.Controllers
             await _gamesService.AddImageAsync(Mapper.Map<Game>(gameModel),
                 image, Request);
 
-            return Created(new Uri($"api/games/{gameId}"), gameModel);
+            return Ok();
         }
 
         [HttpDelete("{id:int}")]
@@ -107,7 +106,7 @@ namespace GameStore.WebApi.Controllers
             }
 
             await _genresService.AddGenreToGameAsync(game, genre);
-            return Created(new Uri($"api/games/{gameId}"), game);
+            return Ok();
         }
 
         [HttpDelete("{gameId:int}/genre/{genreId:int}")]
