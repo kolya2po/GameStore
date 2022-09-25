@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Infrastructure;
@@ -26,8 +27,10 @@ namespace GameStore.BLL.Services
         public async Task<GameModel> GetByIdAsync(int id)
         {
             var game = await UnitOfWork.GamesRepository.GetByIdWithDetailsAsync(id);
+            var model = Mapper.Map<GameModel>(game);
+            model.Comments = model.Comments.Where(c => c.ParentCommentId == null);
 
-            return Mapper.Map<GameModel>(game);
+            return model;
         }
 
         public async Task<GameModel> CreateAsync(GameModel model)
