@@ -1,4 +1,5 @@
-﻿using GameStore.DAL.Interfaces;
+﻿using System;
+using GameStore.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ namespace GameStore.DAL.ServiceConfiguration
 
             services.AddDbContext<GameStoreDbContext>(opt =>
                 opt.UseInMemoryDatabase("db1"));
+                
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 

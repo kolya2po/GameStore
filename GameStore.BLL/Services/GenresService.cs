@@ -52,7 +52,7 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-         public async Task AddGenreToGameAsync(GameModel gameModel, GenreModel genreModel)
+        public async Task AddGenreToGameAsync(GameModel gameModel, GenreModel genreModel)
         {
             if (genreModel.ParentGenreId == null && genreModel.SubGenres.Any())
             {
