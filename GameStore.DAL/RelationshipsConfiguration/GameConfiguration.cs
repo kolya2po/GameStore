@@ -10,6 +10,10 @@ namespace GameStore.DAL.RelationshipsConfiguration
         {
             builder.Property(c => c.Price)
                 .HasColumnType("decimal(10,4)");
+
+            builder.HasOne<User>()
+                .WithMany(c => c.CreatedGames)
+                .HasForeignKey(c => c.AuthorId);
         }
     }
 }

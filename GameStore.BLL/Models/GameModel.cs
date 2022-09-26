@@ -9,5 +9,6 @@ namespace GameStore.BLL.Models
         public decimal Price { get; set; }
         public IEnumerable<string> Genres { get; set; }
         public string Description { get; set; }
+        public int AuthorId { get; set; }
     }
 }

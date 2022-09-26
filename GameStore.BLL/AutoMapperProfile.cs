@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using AutoMapper;
 using GameStore.BLL.Models;
+using GameStore.BLL.Models.Identity;
 using GameStore.DAL.Entities;
 
 namespace GameStore.BLL
@@ -14,6 +15,8 @@ namespace GameStore.BLL
                 .ReverseMap();
 
             CreateMap<Genre, GenreModel>().ReverseMap();
+
+            CreateMap<User, UserModel>().ReverseMap();
         }
     }
 }

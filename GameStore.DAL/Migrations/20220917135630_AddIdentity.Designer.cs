@@ -4,6 +4,7 @@ using GameStore.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameStore.DAL.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    partial class GameStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220917135630_AddIdentity")]
+    partial class AddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,9 +32,6 @@ namespace GameStore.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -46,8 +45,6 @@ namespace GameStore.DAL.Migrations
                         .HasColumnType("decimal(10,4)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
 
                     b.ToTable("Games");
                 });
@@ -382,15 +379,6 @@ namespace GameStore.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("GameStore.DAL.Entities.Game", b =>
-                {
-                    b.HasOne("GameStore.DAL.Entities.User", null)
-                        .WithMany("CreatedGames")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("GameStore.DAL.Entities.GameGenre", b =>
                 {
                     b.HasOne("GameStore.DAL.Entities.Game", "Game")
@@ -478,11 +466,6 @@ namespace GameStore.DAL.Migrations
                     b.Navigation("Games");
 
                     b.Navigation("SubGenres");
-                });
-
-            modelBuilder.Entity("GameStore.DAL.Entities.User", b =>
-                {
-                    b.Navigation("CreatedGames");
                 });
 #pragma warning restore 612, 618
         }
