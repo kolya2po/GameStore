@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.WebApi.Models.Games;
@@ -6,8 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.OData.Query;
 using GameStore.DAL.Entities;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -79,7 +80,7 @@ namespace GameStore.WebApi.Controllers
             await _gamesService.AddImageAsync(Mapper.Map<Game>(gameModel),
                 image, Request);
 
-            return Ok();
+            return Created(new Uri($"api/games/{gameId}"), gameModel);
         }
 
         [HttpDelete("{id:int}")]
@@ -106,7 +107,7 @@ namespace GameStore.WebApi.Controllers
             }
 
             await _genresService.AddGenreToGameAsync(game, genre);
-            return Ok();
+            return Created(new Uri($"api/games/{gameId}"), game);
         }
 
         [HttpDelete("{gameId:int}/genre/{genreId:int}")]
