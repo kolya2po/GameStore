@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
@@ -14,7 +11,11 @@ namespace GameStore.BLL.Services
 {
     public class GamesService : BaseService, IGamesService
     {
-        public GamesService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) { }
+        private readonly IImagesService _imagesService;
+        public GamesService(IUnitOfWork unitOfWork, IMapper mapper, IImagesService imagesService) : base(unitOfWork, mapper)
+        {
+            _imagesService = imagesService;
+        }
 
         public async Task<IEnumerable<GameModel>> GetAllAsync()
         {
@@ -37,6 +38,7 @@ namespace GameStore.BLL.Services
             await UnitOfWork.GamesRepository.CreateAsync(game);
             await UnitOfWork.SaveChangesAsync();
 
+            model.Id = game.Id;
             return model;
         }
 
@@ -55,36 +57,11 @@ namespace GameStore.BLL.Services
 
         public async Task AddImageAsync(Game game, IFormFile image, HttpRequest request)
         {
-            ValidateFile(image);
-
-            var imageFormat = image.FileName.Split('.')[^1];
             const string pathToFolder = @"D:\Items";
 
-            var fileName = $"{Guid.NewGuid()}.{imageFormat}";
-            var filePath = Path.Combine(pathToFolder, fileName);
-
-            await using var stream = new FileStream(filePath, FileMode.Create);
-
-            await image.CopyToAsync(stream);
-
-            var domainName = $"{request.Scheme}://{request.Host.Value}";
-
-            game.ImagePath = $"{domainName}/{fileName}";
+            game.ImagePath = await _imagesService.SaveImageAsync(image, pathToFolder, request);
 
             await UnitOfWork.SaveChangesAsync();
-        }
-
-        private static void ValidateFile(IFormFile file)
-        {
-            if (file == null)
-            {
-                throw new GameStoreException("Image was null.");
-            }
-
-            if (!file.ContentType.Contains("image"))
-            {
-                throw new GameStoreException("You should send an image.");
-            }
         }
     }
 }

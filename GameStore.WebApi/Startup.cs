@@ -55,6 +55,7 @@ namespace GameStore.WebApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
