@@ -12,6 +12,7 @@ namespace GameStore.WebApi.Controllers
     public class GenresController : BaseController
     {
         private readonly IGenresService _genresService;
+
         public GenresController(IMapper mapper, IGenresService genresService) : base(mapper)
         {
             _genresService = genresService;
