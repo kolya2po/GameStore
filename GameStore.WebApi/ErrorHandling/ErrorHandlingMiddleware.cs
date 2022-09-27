@@ -37,6 +37,7 @@ namespace GameStore.WebApi.ErrorHandling
                 if (_hostingEnvironment.IsDevelopment())
                 {
                     await context.Response.WriteAsync(ex.Message);
+                    return;
                 }
 
                 await context.Response.WriteAsync("Internal server error occurred.");

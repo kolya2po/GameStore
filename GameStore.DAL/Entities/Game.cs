@@ -10,5 +10,6 @@ namespace GameStore.DAL.Entities
         public IEnumerable<GameGenre> Genres { get; set; }
         public string Description { get; set; }
         public int AuthorId { get; set; }
+        public IEnumerable<Comment> Comments { get; set; }
     }
 }
