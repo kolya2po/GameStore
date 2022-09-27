@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
-using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
@@ -34,7 +30,6 @@ namespace GameStore.BLL.Services
             }
 
             var gameModel = Mapper.Map<GameModel>(game);
-            gameModel.Comments = gameModel?.Comments.Where(c => c.ParentCommentId == null);
 
             return gameModel;
         }
@@ -62,38 +57,9 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddImageAsync(Game game, IFormFile image, HttpRequest request)
+        public Task AddImageAsync(Game game, IFormFile image, HttpRequest request)
         {
-            ValidateFile(image);
-
-            var imageFormat = image.FileName.Split('.')[^1];
-            const string pathToFolder = @"D:\Items";
-
-            var fileName = $"{Guid.NewGuid()}.{imageFormat}";
-            var filePath = Path.Combine(pathToFolder, fileName);
-
-            await using var stream = new FileStream(filePath, FileMode.Create);
-
-            await image.CopyToAsync(stream);
-
-            var domainName = $"{request.Scheme}://{request.Host.Value}";
-
-            game.ImagePath = $"{domainName}/{fileName}";
-
-            await UnitOfWork.SaveChangesAsync();
-        }
-
-        private static void ValidateFile(IFormFile file)
-        {
-            if (file == null)
-            {
-                throw new GameStoreException("Image was null.");
-            }
-
-            if (!file.ContentType.Contains("image"))
-            {
-                throw new GameStoreException("You should send an image.");
-            }
+            return null;
         }
     }
 }
