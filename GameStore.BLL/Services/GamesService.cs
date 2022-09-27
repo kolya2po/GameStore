@@ -41,7 +41,8 @@ namespace GameStore.BLL.Services
             await UnitOfWork.GamesRepository.CreateAsync(game);
             await UnitOfWork.SaveChangesAsync();
 
-            return Mapper.Map<GameModel>(game);
+            model.Id = game.Id;
+            return model;
         }
 
         public async Task UpdateAsync(GameModel model)
@@ -57,9 +58,13 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public Task AddImageAsync(Game game, IFormFile image, HttpRequest request)
+        public async Task AddImageAsync(Game game, IFormFile image, HttpRequest request)
         {
-            return null;
+            const string pathToFolder = @"D:\Items";
+
+            game.ImagePath = await _imagesService.SaveImageAsync(image, pathToFolder, request);
+
+            await UnitOfWork.SaveChangesAsync();
         }
     }
 }
