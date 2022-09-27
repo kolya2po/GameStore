@@ -45,9 +45,7 @@ namespace GameStore.BLL.Services
             await UnitOfWork.GamesRepository.CreateAsync(game);
             await UnitOfWork.SaveChangesAsync();
 
-
-            model.Id = game.Id;
-            return model;
+            return Mapper.Map<GameModel>(game);
         }
 
         public async Task UpdateAsync(GameModel model)
