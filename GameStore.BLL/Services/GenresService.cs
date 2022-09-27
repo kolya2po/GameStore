@@ -72,11 +72,6 @@ namespace GameStore.BLL.Services
 
         public async Task RemoveGenreFromGameAsync(GameModel gameModel, GenreModel genreModel)
         {
-            if (genreModel.ParentGenreId == null && genreModel.SubGenres.Any())
-            {
-                throw new GameStoreException("You cannot assign a parent genre to the game.");
-            }
-
             await ValidateIfGameDoesNotHaveGenre(gameModel.Id, genreModel.Id);
 
             var gameGenre = await UnitOfWork.GameGenresRepository.GetByIdAsync(gameModel.Id, genreModel.Id);
