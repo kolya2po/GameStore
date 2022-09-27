@@ -22,40 +22,6 @@ namespace GameStore.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("GameStore.DAL.Entities.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ParentCommentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AuthorId");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("ParentCommentId");
-
-                    b.ToTable("Comments");
-                });
-
             modelBuilder.Entity("GameStore.DAL.Entities.Game", b =>
                 {
                     b.Property<int>("Id")
@@ -416,27 +382,6 @@ namespace GameStore.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("GameStore.DAL.Entities.Comment", b =>
-                {
-                    b.HasOne("GameStore.DAL.Entities.User", "Author")
-                        .WithMany("CreatedComments")
-                        .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GameStore.DAL.Entities.Game", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("GameStore.DAL.Entities.Comment", null)
-                        .WithMany("Replies")
-                        .HasForeignKey("ParentCommentId");
-
-                    b.Navigation("Author");
-                });
-
             modelBuilder.Entity("GameStore.DAL.Entities.Game", b =>
                 {
                     b.HasOne("GameStore.DAL.Entities.User", null)
@@ -523,15 +468,8 @@ namespace GameStore.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GameStore.DAL.Entities.Comment", b =>
-                {
-                    b.Navigation("Replies");
-                });
-
             modelBuilder.Entity("GameStore.DAL.Entities.Game", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Genres");
                 });
 
@@ -544,8 +482,6 @@ namespace GameStore.DAL.Migrations
 
             modelBuilder.Entity("GameStore.DAL.Entities.User", b =>
                 {
-                    b.Navigation("CreatedComments");
-
                     b.Navigation("CreatedGames");
                 });
 #pragma warning restore 612, 618

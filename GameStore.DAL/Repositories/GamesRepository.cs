@@ -60,8 +60,6 @@ namespace GameStore.DAL.Repositories
             return await DbContext.Games.Include(c => c.Genres)
                 .ThenInclude(c => c.Genre)
                 .ThenInclude(c => c.SubGenres)
-                .Include(c => c.Comments)
-                .ThenInclude(c => c.Replies)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
     }

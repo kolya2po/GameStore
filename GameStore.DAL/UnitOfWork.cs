@@ -10,7 +10,6 @@ namespace GameStore.DAL
         private GamesRepository _gamesRepository;
         private GenresRepository _genresRepository;
         private GameGenresRepository _gameGenresRepository;
-        private CommentsRepository _commentsRepository;
 
         public UnitOfWork(GameStoreDbContext dbContext)
         {
@@ -22,8 +21,6 @@ namespace GameStore.DAL
 
         public IGenresRepository GenresRepository => _genresRepository ??= new GenresRepository(_dbContext);
         public IGameGenresRepository GameGenresRepository => _gameGenresRepository ??= new GameGenresRepository(_dbContext);
-        public ICommentsRepository CommentsRepository =>
-            _commentsRepository ??= new CommentsRepository(_dbContext);
 
         public async Task SaveChangesAsync()
         {

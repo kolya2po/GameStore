@@ -28,14 +28,7 @@ namespace GameStore.BLL.Services
         {
             var game = await UnitOfWork.GamesRepository.GetByIdWithDetailsAsync(id);
 
-            if (game == null)
-            {
-                return null;
-            }
-
-            var gameModel = Mapper.Map<GameModel>(game);
-
-            return gameModel;
+            return Mapper.Map<GameModel>(game);
         }
 
         public async Task<GameModel> CreateAsync(GameModel model)
