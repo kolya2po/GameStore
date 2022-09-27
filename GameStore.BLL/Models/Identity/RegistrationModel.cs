@@ -4,20 +4,20 @@ namespace GameStore.BLL.Models.Identity
 {
     public class RegistrationModel
     {
-        [Required(ErrorMessage = "You should provide your first name.")]
+        [Required(ErrorMessage = "FirstName is required.")]
         public string FirstName { get; set; }
 
-        [Required(ErrorMessage = "You should provide your last name.")]
+        [Required(ErrorMessage = "LastName is required.")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "You should provide your username.")]
+        [Required(ErrorMessage = "UserName is required.")]
         public string UserName { get; set; }
 
-        [Required(ErrorMessage = "You should provide your email.")]
+        [Required(ErrorMessage = "Email is required.")]
         [EmailAddress]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "You should provide your password.")]
+        [Required(ErrorMessage = "Password is required.")]
         public string Password { get; set; }
     }
 }

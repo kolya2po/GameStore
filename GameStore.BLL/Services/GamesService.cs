@@ -11,7 +11,11 @@ namespace GameStore.BLL.Services
 {
     public class GamesService : BaseService, IGamesService
     {
-        public GamesService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) { }
+        private readonly IImagesService _imagesService;
+        public GamesService(IUnitOfWork unitOfWork, IMapper mapper, IImagesService imagesService) : base(unitOfWork, mapper)
+        {
+            _imagesService = imagesService;
+        }
 
         public async Task<IEnumerable<GameModel>> GetAllAsync()
         {
@@ -24,14 +28,7 @@ namespace GameStore.BLL.Services
         {
             var game = await UnitOfWork.GamesRepository.GetByIdWithDetailsAsync(id);
 
-            if (game == null)
-            {
-                return null;
-            }
-
-            var gameModel = Mapper.Map<GameModel>(game);
-
-            return gameModel;
+            return Mapper.Map<GameModel>(game);
         }
 
         public async Task<GameModel> CreateAsync(GameModel model)

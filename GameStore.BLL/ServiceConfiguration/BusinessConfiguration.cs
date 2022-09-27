@@ -19,8 +19,7 @@ namespace GameStore.BLL.ServiceConfiguration
             services.AddTransient<IGamesService, GamesService>();
             services.AddTransient<IGenresService, GenresService>();
             services.AddTransient<IUsersService, UsersService>();
-
-            services.AddTransient<ICommentsService, CommentsService>();
+            services.AddTransient<IImagesService, ImagesService>();
 
             services.AddAutoMapper(opt => opt.AddProfile(new AutoMapperProfile()));
 
@@ -64,6 +63,7 @@ namespace GameStore.BLL.ServiceConfiguration
                     )
                 };
             });
+
 
             return services;
         }

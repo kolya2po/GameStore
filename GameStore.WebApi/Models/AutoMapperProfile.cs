@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Models;
-using GameStore.WebApi.Models.Comments;
 using GameStore.WebApi.Models.Games;
 using GameStore.WebApi.Models.Genres;
 
@@ -20,9 +19,6 @@ namespace GameStore.WebApi.Models
 
             CreateMap<CreateGenreDto, GenreModel>().ReverseMap();
             CreateMap<UpdateGenreDto, GenreModel>().ReverseMap();
-
-            CreateMap<CreateCommentDto, CommentModel>().ReverseMap();
-            CreateMap<UpdateCommentDto, CommentModel>().ReverseMap();
         }
     }
 }

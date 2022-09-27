@@ -41,7 +41,7 @@ namespace GameStore.WebApi.Controllers
             await _userService.SignOutAsync();
         }
 
-        [HttpPost("{id:int}/add-avatar")]
+        [HttpPost("{id:int}/avatar")]
         public async Task<ActionResult> AddAvatar(int id, IFormFile avatar)
         {
             var userModel = await _userService.GetByIdAsync(id);

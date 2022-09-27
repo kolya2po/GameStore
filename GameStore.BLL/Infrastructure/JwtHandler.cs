@@ -17,7 +17,17 @@ namespace GameStore.BLL.Infrastructure
             _configuration = configuration;
         }
 
-        public SigningCredentials GetSigningCredentials()
+        public string GetJwtToken(IEnumerable<Claim> claims)
+        {
+            var signingCredentials = GetSigningCredentials();
+            var configuredToken = GenerateToken(signingCredentials, claims);
+
+            var token = new JwtSecurityTokenHandler().WriteToken(configuredToken);
+
+            return token;
+        }
+
+        private SigningCredentials GetSigningCredentials()
         {
             var key = Encoding.UTF8.GetBytes(_configuration["JWT:secret"]);
             var secret = new SymmetricSecurityKey(key);
@@ -25,12 +35,13 @@ namespace GameStore.BLL.Infrastructure
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
 
-        public JwtSecurityToken GenerateToken(SigningCredentials credentials)
+        private JwtSecurityToken GenerateToken(SigningCredentials credentials, 
+            IEnumerable<Claim> claims)
         {
             return new JwtSecurityToken(
                 issuer: _configuration["JWT:validIssuer"],
                 audience: _configuration["JWT:validAudience"],
-                claims: null,
+                claims: claims,
                 expires: DateTime.Now.AddHours(
                     double.Parse(_configuration["JWT:lifeTimeInHours"])),
                 signingCredentials: credentials);
