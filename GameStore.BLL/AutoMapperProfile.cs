@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading;
 using AutoMapper;
 using GameStore.BLL.Models;
 using GameStore.BLL.Models.Identity;
@@ -17,6 +19,13 @@ namespace GameStore.BLL
             CreateMap<Genre, GenreModel>().ReverseMap();
 
             CreateMap<User, UserModel>().ReverseMap();
+
+            CreateMap<Comment, CommentModel>()
+                .ForMember(dst => dst.CreationDate,
+                    opt =>
+                    opt.MapFrom(src =>
+                       src.CreationDate.ToString(Thread.CurrentThread.CurrentCulture)))
+                .ReverseMap();
         }
     }
 }

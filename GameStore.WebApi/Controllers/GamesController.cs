@@ -96,16 +96,17 @@ namespace GameStore.WebApi.Controllers
         public async Task<ActionResult> LinkGenreToGame(int gameId, int genreId)
         {
             var game = await _gamesService.GetByIdAsync(gameId);
-            var genre = await _genresService.GetByIdAsync(genreId);
 
             if (game == null)
             {
-                return NotFound();
+                return NotFound($"Game with id {gameId} doesn't exist.");
             }
+
+            var genre = await _genresService.GetByIdAsync(genreId);
 
             if (genre == null)
             {
-                return NotFound();
+                return NotFound($"Genre with id {gameId} doesn't exist.");
             }
 
             await _genresService.AddGenreToGameAsync(game, genre);
