@@ -10,6 +10,5 @@ namespace GameStore.BLL.Models
         public IEnumerable<string> Genres { get; set; }
         public string Description { get; set; }
         public int AuthorId { get; set; }
-        public IEnumerable<CommentModel> Comments { get; set; }
     }
 }

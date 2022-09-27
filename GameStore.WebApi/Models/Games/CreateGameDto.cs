@@ -10,8 +10,5 @@ namespace GameStore.WebApi.Models.Games
 
         [Required(ErrorMessage = "Description is required.")]
         public string Description { get; set; }
-
-        [Required(ErrorMessage = "Author's id is required.")]
-        public int AuthorId { get; set; }
     }
 }
