@@ -17,35 +17,18 @@ namespace GameStore.BLL.Services
             var comment = await UnitOfWork.CommentsRepository.GetByIdAsync(id);
             return Mapper.Map<CommentModel>(comment);
         }
-
-        // Should I return created comment from db? 
-        // Because I need to have comment with id on the client 
-        // to have possibility to make reply.
         
-        public async Task<CommentModel> ReplyToCommentAsync(CommentModel parentComment, CommentModel reply)
-        {
-            var comment = Mapper.Map<Comment>(reply);
-            comment.ParentCommentId = parentComment.Id;
-            comment.CreationDate = DateTime.Now;
-
-            await UnitOfWork.CommentsRepository.CreateAsync(comment);
-            await UnitOfWork.SaveChangesAsync();
-
-            return reply;
-        }
-
-        // Should I return created comment from db? 
-        // Because I need to have comment with id on the client 
-        // to have possibility to make reply.
-        public async Task<CommentModel> CreateCommentForGameAsync(GameModel gameModel, CommentModel commentModel)
+        public async Task<CommentModel> CreateCommentAsync(GameModel gameModel, CommentModel commentModel)
         {
             var comment = Mapper.Map<Comment>(commentModel);
             comment.GameId = gameModel.Id;
 
+            comment.CreationDate = DateTime.UtcNow;
+
             await UnitOfWork.CommentsRepository.CreateAsync(comment);
             await UnitOfWork.SaveChangesAsync();
 
-            return commentModel;
+            return Mapper.Map<CommentModel>(comment);
         }
 
         public async Task UpdateAsync(CommentModel model)

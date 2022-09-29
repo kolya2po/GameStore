@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.WebApi.Models.Games;
@@ -6,8 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.OData.Query;
 using GameStore.DAL.Entities;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -22,6 +24,7 @@ namespace GameStore.WebApi.Controllers
             _genresService = genresService;
         }
 
+        [Authorize]
         [HttpGet]
         [EnableQuery]
         public async Task<ActionResult<IEnumerable<GameModel>>> GetAll()
@@ -90,39 +93,42 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPost("{gameId:int}/genre/{genreId:int}")]
-        public async Task<ActionResult> AddGenre(int gameId, int genreId)
+        public async Task<ActionResult> LinkGenreToGame(int gameId, int genreId)
         {
             var game = await _gamesService.GetByIdAsync(gameId);
-            var genre = await _genresService.GetByIdAsync(genreId);
 
             if (game == null)
             {
-                return NotFound();
+                return NotFound($"Game with id {gameId} doesn't exist.");
             }
+
+            var genre = await _genresService.GetByIdAsync(genreId);
 
             if (genre == null)
             {
-                return NotFound();
+                return NotFound($"Genre with id {gameId} doesn't exist.");
             }
 
             await _genresService.AddGenreToGameAsync(game, genre);
             return Ok();
         }
 
+
         [HttpDelete("{gameId:int}/genre/{genreId:int}")]
-        public async Task<ActionResult> RemoveGenre(int gameId, int genreId)
+        public async Task<ActionResult> UnlinkGenreFromGame(int gameId, int genreId)
         {
             var game = await _gamesService.GetByIdAsync(gameId);
-            var genre = await _genresService.GetByIdAsync(genreId);
 
             if (game == null)
             {
-                return NotFound();
+                return NotFound($"Game with id {gameId} doesn't exist.");
             }
+
+            var genre = await _genresService.GetByIdAsync(genreId);
 
             if (genre == null)
             {
-                return NotFound();
+                return NotFound($"Genre with id {genreId} doesn't exist.");
             }
 
             await _genresService.RemoveGenreFromGameAsync(game, genre);

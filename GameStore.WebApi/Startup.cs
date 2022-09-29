@@ -43,10 +43,10 @@ namespace GameStore.WebApi
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(opt =>
+                app.UseSwaggerUI(options =>
                 {
-                    opt.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-                    opt.RoutePrefix = string.Empty;
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    options.RoutePrefix = string.Empty;
                 });
             }
 
@@ -55,6 +55,7 @@ namespace GameStore.WebApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseMiddleware<ErrorHandlingMiddleware>();

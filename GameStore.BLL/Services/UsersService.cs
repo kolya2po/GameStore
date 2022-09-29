@@ -1,7 +1,8 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Infrastructure;
@@ -19,13 +20,15 @@ namespace GameStore.BLL.Services
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly JwtHandler _jwtHandler;
+        private readonly IImagesService _imagesService;
 
-        public UsersService(IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager, JwtHandler jwtHandler)
+        public UsersService(IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager, JwtHandler jwtHandler, IImagesService imagesService)
         {
             _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtHandler = jwtHandler;
+            _imagesService = imagesService;
         }
 
         public async Task<UserModel> GetByIdAsync(int id)
@@ -56,7 +59,7 @@ namespace GameStore.BLL.Services
             }
 
             await _signInManager.SignInAsync(user, false);
-            var token = GetJwtToken();
+            var token = _jwtHandler.GetJwtToken(Enumerable.Empty<Claim>());
 
             return new UserDto {UserId = user.Id, Token = token};
         }
@@ -76,57 +79,22 @@ namespace GameStore.BLL.Services
                 throw new GameStoreException("Incorrect user's credentials.");
             }
 
-            var token = GetJwtToken();
+            var token = _jwtHandler.GetJwtToken(Enumerable.Empty<Claim>());
 
             return new UserDto { UserId = user.Id, Token = token };
         }
 
         public async Task AddAvatarAsync(User user, IFormFile avatar, HttpRequest request)
         {
-            ValidateFile(avatar);
-
             const string pathToFolder = @"D:\Items\Avatars";
-            var format = avatar.FileName.Split('.')[^1];
-            var imageName = $"{Guid.NewGuid()}.{format}";
+            user.AvatarImagePath = await _imagesService.SaveImageAsync(avatar, pathToFolder, request);
 
-            var path = Path.Combine(pathToFolder, imageName);
-
-            await using var stream = new FileStream(path, FileMode.Create);
-            await avatar.CopyToAsync(stream);
-
-            var domainName = $"{request.Scheme}://{request.Host.Value}";
-
-            user.AvatarImagePath = $"{domainName}/Avatars/{imageName}";
             await _userManager.UpdateAsync(user);
-
         }
 
         public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();
-        }
-
-        private string GetJwtToken()
-        {
-            var signingCredentials = _jwtHandler.GetSigningCredentials();
-            var configuredToken = _jwtHandler.GenerateToken(signingCredentials);
-
-            var token = new JwtSecurityTokenHandler().WriteToken(configuredToken);
-
-            return token;
-        }
-
-        private static void ValidateFile(IFormFile avatar)
-        {
-            if (avatar == null)
-            {
-                throw new GameStoreException("Avatar was null.");
-            }
-
-            if (!avatar.ContentType.Contains("image"))
-            {
-                throw new InvalidFileContentTypeException();
-            }
         }
     }
 }

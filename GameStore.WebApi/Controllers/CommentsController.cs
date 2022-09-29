@@ -18,7 +18,7 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CommentModel>> CreateCommentForGame(CreateCommentDto commentDto)
+        public async Task<ActionResult<CommentModel>> CreateComment(CreateCommentDto commentDto)
         {
             var gameModel = await _gamesService.GetByIdAsync(commentDto.GameId);
 
@@ -27,25 +27,21 @@ namespace GameStore.WebApi.Controllers
                 return NotFound("Game doesn't exist.");
             }
 
-            var commentModel = Mapper.Map<CommentModel>(commentDto);
+            var parentCommentId = commentDto.ParentCommentId;
 
-            return Ok(await _commentsService.CreateCommentForGameAsync(gameModel, commentModel));
-        }
-
-        
-        [HttpPost("{commentId:int}")]
-        public async Task<ActionResult<CommentModel>> CreateReply(int commentId, CreateCommentDto commentDto)
-        {
-            var commentModel = await _commentsService.GetByIdAsync(commentId);
-
-            if (commentModel == null)
+            if (parentCommentId.HasValue)
             {
-                return NotFound("Comment doesn't exist.");
+                var parentComment = await _commentsService.GetByIdAsync(parentCommentId.Value);
+
+                if (parentComment == null)
+                {
+                    return NotFound($"Comment with id {parentCommentId.Value} doesn't exist.");
+                }
             }
 
-            var replyModel = Mapper.Map<CommentModel>(commentDto);
+            var commentModel = Mapper.Map<CommentModel>(commentDto);
 
-            return Ok(await _commentsService.ReplyToCommentAsync(commentModel, replyModel));
+            return Ok(await _commentsService.CreateCommentAsync(gameModel, commentModel));
         }
 
         [HttpPut]

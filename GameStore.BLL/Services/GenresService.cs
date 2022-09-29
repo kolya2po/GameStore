@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace GameStore.BLL.Services
 {
@@ -31,8 +31,17 @@ namespace GameStore.BLL.Services
 
         public async Task<GenreModel> CreateAsync(GenreModel model)
         {
-            await UnitOfWork.GenresRepository.CreateAsync(Mapper.Map<Genre>(model));
+            var parentId = model.ParentGenreId;
+            if (parentId.HasValue)
+            {
+                var parent = await GetByIdAsync(parentId.Value);
 
+                if (parent == null)
+                {
+                    throw new GameStoreException($"Genre with id {parentId.Value} doesn't exist.");
+                }
+            }
+            await UnitOfWork.GenresRepository.CreateAsync(Mapper.Map<Genre>(model));
             await UnitOfWork.SaveChangesAsync();
 
             return model;
@@ -52,7 +61,7 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-         public async Task AddGenreToGameAsync(GameModel gameModel, GenreModel genreModel)
+        public async Task AddGenreToGameAsync(GameModel gameModel, GenreModel genreModel)
         {
             if (genreModel.ParentGenreId == null && genreModel.SubGenres.Any())
             {
@@ -60,7 +69,7 @@ namespace GameStore.BLL.Services
             }
 
             await ValidateIfGameAlreadyHasGenre(gameModel.Id, genreModel.Id);
-           
+
             var gameGenre = new GameGenre
             {
                 GameId = gameModel.Id,
@@ -73,11 +82,6 @@ namespace GameStore.BLL.Services
 
         public async Task RemoveGenreFromGameAsync(GameModel gameModel, GenreModel genreModel)
         {
-            if (genreModel.ParentGenreId == null && genreModel.SubGenres.Any())
-            {
-                throw new GameStoreException("You cannot assign a parent genre to the game.");
-            }
-
             await ValidateIfGameDoesNotHaveGenre(gameModel.Id, genreModel.Id);
 
             var gameGenre = await UnitOfWork.GameGenresRepository.GetByIdAsync(gameModel.Id, genreModel.Id);
