@@ -20,7 +20,7 @@ namespace GameStore.BLL.ServiceConfiguration
             services.AddTransient<IGenresService, GenresService>();
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IImagesService, ImagesService>();
-
+            services.AddTransient<ICartsService, CartsService>();
             services.AddTransient<ICommentsService, CommentsService>();
 
             services.AddAutoMapper(opt => opt.AddProfile(new AutoMapperProfile()));
@@ -30,6 +30,8 @@ namespace GameStore.BLL.ServiceConfiguration
 
         public static IServiceCollection AddAndConfigureIdentityWithJwtToken(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddTransient<JwtHandler>();
+
             services.AddIdentity<User, IdentityRole<int>>(config =>
                 {
                     config.User.RequireUniqueEmail = true;
@@ -39,7 +41,6 @@ namespace GameStore.BLL.ServiceConfiguration
                 })
                 .AddEntityFrameworkStores<GameStoreDbContext>();
 
-            services.AddTransient<JwtHandler>();
             var tokenConfiguration = configuration.GetSection("JWT");
 
             services.AddAuthentication(options =>

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using AutoMapper;
 using GameStore.BLL.Models;
@@ -25,6 +24,11 @@ namespace GameStore.BLL
                     opt =>
                     opt.MapFrom(src =>
                        src.CreationDate.ToString(Thread.CurrentThread.CurrentCulture)))
+                .ReverseMap();
+
+            CreateMap<Cart, CartModel>()
+                .ForMember(dst => dst.TotalItems, opt =>
+                    opt.MapFrom(src => src.CartItems.Count()))
                 .ReverseMap();
         }
     }
