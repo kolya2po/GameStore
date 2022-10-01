@@ -4,6 +4,7 @@ using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
 using System.Threading.Tasks;
+using GameStore.BLL.Interfaces;
 
 namespace GameStore.BLL.Services
 {
