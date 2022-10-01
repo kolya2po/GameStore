@@ -1,7 +1,7 @@
 ﻿using GameStore.BLL.Models;
 using System.Threading.Tasks;
 
-namespace GameStore.BLL.Infrastructure
+namespace GameStore.BLL.Interfaces
 {
     public interface ICartItemsService
     {
