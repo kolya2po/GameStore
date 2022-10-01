@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -52,6 +52,30 @@ namespace GameStore.WebApi.Controllers
             Response.Cookies.Append("cartId", cartModel.Id.ToString());
 
             return Ok();
+        }
+
+        [HttpPut("game/{gameId:int}")]
+        public async Task<ActionResult> DecreaseQuantity(int gameId)
+        {
+            var game = await _gamesService.GetByIdAsync(gameId);
+
+            if (game == null)
+            {
+                return NotFound("Game doesn't exist.");
+            }
+
+            Request.Cookies.TryGetValue("cartId", out var cartId);
+
+            await _cartsService.DecreaseQuantityAsync(Convert.ToInt32(cartId), game);
+            return Ok();
+        }
+
+        [HttpDelete("item/{gameId:int}")]
+        public async Task<ActionResult> RemoveCartItem(int gameId)
+        {
+            Request.Cookies.TryGetValue("cartId", out var cartId);
+            await _cartsService.RemoveItemAsync(Convert.ToInt32(cartId), gameId);
+            return NoContent();
         }
     }
 }

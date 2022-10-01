@@ -9,9 +9,10 @@ namespace GameStore.DAL.Repositories
     {
         public CartItemsRepository(GameStoreDbContext dbContext) : base(dbContext) { }
 
-        public async Task<CartItem> GetByIdAsync(int id)
+        public async Task<CartItem> GetByIdAsync(int cartId, int gameId)
         {
-            return await DbContext.CartItems.FirstOrDefaultAsync(c => c.Id == id);
+            return await DbContext.CartItems
+                .FirstOrDefaultAsync(c => c.CartId == cartId && c.GameId == gameId);
         }
 
         public async Task CreateAsync(CartItem item)
@@ -19,9 +20,10 @@ namespace GameStore.DAL.Repositories
             await DbContext.CartItems.AddAsync(item);
         }
 
-        public async Task DeleteByIdAsync(int id)
+        public async Task DeleteByIdAsync(int cartId, int gameId)
         {
-            var item = await DbContext.CartItems.FirstOrDefaultAsync(c => c.Id == id);
+            var item = await DbContext.CartItems
+                .FirstOrDefaultAsync(c => c.CartId == cartId && c.GameId == gameId);
 
             if (item != null)
             {
