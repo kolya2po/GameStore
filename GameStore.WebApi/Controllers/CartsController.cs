@@ -47,7 +47,7 @@ namespace GameStore.WebApi.Controllers
                 return Ok();
             }
 
-            var cartModel = await _cartsService.CreateAsync(new CartModel());
+            var cartModel = await _cartsService.CreateAsync();
             await _cartsService.AddGameAsync(cartModel.Id, game);
             Response.Cookies.Append("cartId", cartModel.Id.ToString());
 
