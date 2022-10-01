@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
@@ -11,7 +10,12 @@ namespace GameStore.BLL.Services
 {
     public class CartsService : BaseService, ICartsService
     {
-        public CartsService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) { }
+        private readonly ICartItemsService _cartItemsService;
+
+        public CartsService(IUnitOfWork unitOfWork, IMapper mapper, ICartItemsService cartItemsService) : base(unitOfWork, mapper)
+        {
+            _cartItemsService = cartItemsService;
+        }
 
         public async Task<CartModel> GetByIdAsync(int id)
         {
@@ -32,66 +36,34 @@ namespace GameStore.BLL.Services
 
         public async Task AddGameAsync(int cartId, GameModel game)
         {
-            var cartModel = await GetByIdAsync(cartId);
+            await ValidateCartAsync(cartId);
 
-            if (cartModel == null)
+            var cartItemModel = await _cartItemsService.GetCartItemByIdAsync(cartId, game.Id);
+
+            if (cartItemModel == null)
             {
-                throw new GameStoreException("Cart doesn't exist.");
-            }
-
-            var cartItem = cartModel.CartItems.FirstOrDefault(c =>
-                c.GameId == game.Id);
-
-            if (cartItem == null)
-            {
-                var newItem = new CartItem
-                {
-                    CartId = cartModel.Id,
-                    GameId = game.Id,
-                    Quantity = 1
-                };
-
-                await UnitOfWork.CartItemsRepository.CreateAsync(newItem);
-                await UnitOfWork.SaveChangesAsync();
+                await _cartItemsService.CreateAsync(cartId, game);
                 return;
             }
 
-            cartItem.Quantity++;
+            await _cartItemsService.IncreaseQuantityAsync(cartId, game.Id);
             await UnitOfWork.SaveChangesAsync();
         }
-
-        public async Task RemoveGameAsync(int cartId, GameModel game)
-        {
-            var cartModel = await GetByIdAsync(cartId);
-
-            if (cartModel == null)
-            {
-                throw new GameStoreException("Cart doesn't exist.");
-            }
-
-            var cartItem = cartModel.CartItems.FirstOrDefault(c => c.GameId == game.Id);
-
-            if (cartItem == null)
-            {
-                throw new GameStoreException("Game is not in cart.");
-            }
-
-            if (cartItem.Quantity > 1)
-            {
-                cartItem.Quantity--;
-                await UnitOfWork.SaveChangesAsync();
-                return;
-            }
-
-            await UnitOfWork.CartItemsRepository.DeleteByIdAsync(cartItem.Id);
-            await UnitOfWork.SaveChangesAsync();
-        }
-
 
         public async Task DeleteByIdAsync(int id)
         {
             await UnitOfWork.CartsRepository.DeleteByIdAsync(id);
             await UnitOfWork.SaveChangesAsync();
+        }
+
+        private async Task ValidateCartAsync(int cartId)
+        {
+            var cartModel = await GetByIdAsync(cartId);
+
+            if (cartModel == null)
+            {
+                throw new GameStoreException("Cart doesn't exist.");
+            }
         }
     }
 }

@@ -26,10 +26,14 @@ namespace GameStore.BLL
                        src.CreationDate.ToString(Thread.CurrentThread.CurrentCulture)))
                 .ReverseMap();
 
+            CreateMap<CartItem, CartItemModel>().ReverseMap();
+
             CreateMap<Cart, CartModel>()
                 .ForMember(dst => dst.TotalItems, opt =>
                     opt.MapFrom(src => src.CartItems.Count()))
                 .ReverseMap();
+
+            CreateMap<Game, GameCartModel>().ReverseMap();
         }
     }
 }

@@ -8,7 +8,6 @@ namespace GameStore.BLL.Interfaces
         Task<CartModel> GetByIdAsync(int id);
         Task<CartModel> CreateAsync(CartModel model);
         Task AddGameAsync(int cartId, GameModel game);
-        Task RemoveGameAsync(int cartId, GameModel game);
         Task DeleteByIdAsync(int id);
     }
 }
