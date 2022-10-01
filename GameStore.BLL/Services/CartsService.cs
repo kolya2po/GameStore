@@ -24,9 +24,9 @@ namespace GameStore.BLL.Services
             return Mapper.Map<CartModel>(cart);
         }
 
-        public async Task<CartModel> CreateAsync(CartModel model)
+        public async Task<CartModel> CreateAsync()
         {
-            var cart = Mapper.Map<Cart>(model);
+            var cart = new Cart();
 
             await UnitOfWork.CartsRepository.CreateAsync(cart);
             await UnitOfWork.SaveChangesAsync();

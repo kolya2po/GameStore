@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using GameStore.BLL.Models;
+﻿using GameStore.BLL.Models;
+using System.Threading.Tasks;
 
 namespace GameStore.BLL.Interfaces
 {
