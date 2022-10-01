@@ -39,10 +39,10 @@ namespace GameStore.BLL.Services
                 throw new GameStoreException("Cart doesn't exist.");
             }
 
-            var cartItem = cartModel.CartItems.FirstOrDefault(c =>
+            var cartItemModel = cartModel.CartItems.FirstOrDefault(c =>
                 c.GameId == game.Id);
 
-            if (cartItem == null)
+            if (cartItemModel == null)
             {
                 var newItem = new CartItem
                 {
@@ -56,6 +56,8 @@ namespace GameStore.BLL.Services
                 return;
             }
 
+            var cartItem = await UnitOfWork.CartItemsRepository
+                .GetByIdAsync(cartItemModel.Id);
             cartItem.Quantity++;
             await UnitOfWork.SaveChangesAsync();
         }

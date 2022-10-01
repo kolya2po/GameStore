@@ -9,6 +9,11 @@ namespace GameStore.DAL.Repositories
     {
         public CartItemsRepository(GameStoreDbContext dbContext) : base(dbContext) { }
 
+        public async Task<CartItem> GetByIdAsync(int id)
+        {
+            return await DbContext.CartItems.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
         public async Task CreateAsync(CartItem item)
         {
             await DbContext.CartItems.AddAsync(item);
