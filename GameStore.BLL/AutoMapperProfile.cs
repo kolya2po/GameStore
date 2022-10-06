@@ -4,6 +4,7 @@ using AutoMapper;
 using GameStore.BLL.Models;
 using GameStore.BLL.Models.Identity;
 using GameStore.DAL.Entities;
+using GameStore.DAL.Entities.Order;
 
 namespace GameStore.BLL
 {
@@ -36,6 +37,22 @@ namespace GameStore.BLL
                 .ReverseMap();
 
             CreateMap<Game, GameCartModel>().ReverseMap();
+
+            CreateMap<Order, OrderModel>()
+                .ForMember(dst => dst.PaymentType, opt => 
+                    opt.MapFrom(c => c.PaymentType.Name))
+                .ReverseMap();
+
+            CreateMap<CartItemModel, OrderItem>()
+                .ForMember(dst => dst.Id, opt =>
+                    opt.Ignore())
+                .ForMember(dst => dst.GameName, opt =>
+                    opt.MapFrom(c => c.Game.Name))
+                .ForMember(dst => dst.GameDescription, opt =>
+                    opt.MapFrom(c => c.Game.Description))
+                .ForMember(dst => dst.GamePrice, opt =>
+                    opt.MapFrom(c => c.Game.Price))
+                .ReverseMap();
         }
     }
 }
