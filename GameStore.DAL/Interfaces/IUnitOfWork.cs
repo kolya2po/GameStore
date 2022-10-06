@@ -4,11 +4,12 @@ namespace GameStore.DAL.Interfaces
 {
     public interface IUnitOfWork
     {
-        public IGamesRepository GamesRepository { get; }
-        public IGenresRepository GenresRepository { get; }
-        public IGameGenresRepository GameGenresRepository { get; }
-        public ICommentsRepository CommentsRepository { get; }
-
+        IGamesRepository GamesRepository { get; }
+        IGenresRepository GenresRepository { get; }
+        IGameGenresRepository GameGenresRepository { get; }
+        ICommentsRepository CommentsRepository { get; }
+        ICartsRepository CartsRepository { get; }
+        ICartItemsRepository CartItemsRepository { get; }
         Task SaveChangesAsync();
     }
 }
