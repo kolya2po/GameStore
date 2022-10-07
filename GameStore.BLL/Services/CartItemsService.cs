@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using GameStore.BLL.Infrastructure;
+using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
 using System.Threading.Tasks;
-using GameStore.BLL.Interfaces;
 
 namespace GameStore.BLL.Services
 {
@@ -37,6 +37,20 @@ namespace GameStore.BLL.Services
             var cartItem = await ValidateAndGetCartItemAsync(cartId, gameId);
 
             cartItem.Quantity++;
+            await UnitOfWork.SaveChangesAsync();
+        }
+
+        public async Task DecreaseQuantityAsync(int cartId, int gameId)
+        {
+            var cartItem = await ValidateAndGetCartItemAsync(cartId, gameId);
+
+            cartItem.Quantity--;
+            await UnitOfWork.SaveChangesAsync();
+        }
+
+        public async Task DeleteByIdAsync(int cartId, int gameId)
+        {
+            await UnitOfWork.CartItemsRepository.DeleteByIdAsync(cartId, gameId);
             await UnitOfWork.SaveChangesAsync();
         }
 

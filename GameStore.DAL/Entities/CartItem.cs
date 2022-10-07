@@ -1,6 +1,6 @@
 ﻿namespace GameStore.DAL.Entities
 {
-    public class CartItem : BaseEntity
+    public class CartItem
     {
         public int GameId { get; set; }
         public Game Game { get; set; }

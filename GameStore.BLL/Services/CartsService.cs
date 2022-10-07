@@ -50,6 +50,25 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
+        public async Task RemoveItemAsync(int cartId, int gameId)
+        {
+            await _cartItemsService.DeleteByIdAsync(cartId, gameId);
+        }
+
+        public async Task DecreaseQuantityAsync(int cartId, GameModel game)
+        {
+            await ValidateCartAsync(cartId);
+            var cartItemModel = await _cartItemsService.GetCartItemByIdAsync(cartId, game.Id);
+
+            if (cartItemModel.Quantity > 1)
+            {
+                await _cartItemsService.DecreaseQuantityAsync(cartId, game.Id);
+                return;
+            }
+
+            await _cartItemsService.DeleteByIdAsync(cartId, game.Id);
+        }
+
         public async Task DeleteByIdAsync(int id)
         {
             await UnitOfWork.CartsRepository.DeleteByIdAsync(id);
