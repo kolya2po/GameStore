@@ -18,16 +18,17 @@ namespace GameStore.WebApi.Controllers
             _gamesService = gamesService;
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<CartModel>> GetById(int id)
+        [HttpGet]
+        public async Task<ActionResult<CartModel>> GetCart()
         {
-            var cart = await _cartsService.GetByIdAsync(id);
-
-            if (cart == null)
+            if (!Request.Cookies.TryGetValue("cartId", out var cartId))
             {
-                return NotFound();
+                var cartModel = await _cartsService.CreateAsync();
+                Response.Cookies.Append("cartId", cartModel.Id.ToString());
+                return Ok(cartModel);
             }
-
+            
+            var cart = await _cartsService.GetByIdAsync(Convert.ToInt32(cartId));
             return Ok(cart);
         }
 

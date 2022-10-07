@@ -1,5 +1,4 @@
-﻿using GameStore.DAL.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GameStore.BLL.Models
 {
@@ -7,7 +6,7 @@ namespace GameStore.BLL.Models
     {
         public int TotalItems { get; set; }
 
-        public IEnumerable<CartItem> CartItems { get; set; }
+        public IEnumerable<CartItemModel> CartItems { get; set; }
 
         public decimal TotalPrice { get; set; }
     }

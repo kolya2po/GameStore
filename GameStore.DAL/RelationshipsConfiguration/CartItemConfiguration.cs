@@ -9,6 +9,9 @@ namespace GameStore.DAL.RelationshipsConfiguration
         public void Configure(EntityTypeBuilder<CartItem> builder)
         {
             builder.HasKey(c => new { c.CartId, c.GameId });
+            builder.HasOne(c => c.Game)
+                .WithOne()
+                .HasForeignKey<CartItem>(c => c.GameId);
         }
     }
 }

@@ -31,6 +31,8 @@ namespace GameStore.BLL
             CreateMap<Cart, CartModel>()
                 .ForMember(dst => dst.TotalItems, opt =>
                     opt.MapFrom(src => src.CartItems.Count()))
+                .ForMember(dst => dst.TotalPrice, opt =>
+                    opt.MapFrom(src => src.CartItems.Sum(c => c.Game.Price * c.Quantity)))
                 .ReverseMap();
 
             CreateMap<Game, GameCartModel>().ReverseMap();
