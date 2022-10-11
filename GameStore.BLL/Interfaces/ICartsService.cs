@@ -6,10 +6,10 @@ namespace GameStore.BLL.Interfaces
     public interface ICartsService
     {
         Task<CartModel> GetByIdAsync(int id);
-        Task<CartModel> CreateAsync();
+        Task<CartModel> CreateAsync(string userName);
         Task AddGameAsync(int cartId, GameModel game);
         Task RemoveItemAsync(int cartId, int gameId);
-        Task DecreaseQuantityAsync(int cartId, GameModel game);
+        Task UpdateAsync(CartModel cartModel);
         Task DeleteByIdAsync(int id);
     }
 }

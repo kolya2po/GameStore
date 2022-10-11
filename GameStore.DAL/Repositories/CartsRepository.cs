@@ -30,5 +30,10 @@ namespace GameStore.DAL.Repositories
                 DbContext.Carts.Remove(cart);
             }
         }
+
+        public void Update(Cart cart)
+        {
+            DbContext.Carts.Update(cart);
+        }
     }
 }

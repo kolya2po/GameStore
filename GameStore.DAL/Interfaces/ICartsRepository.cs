@@ -8,5 +8,6 @@ namespace GameStore.DAL.Interfaces
         Task<Cart> GetByIdWithDetailsAsync(int id);
         Task CreateAsync(Cart cart);
         Task DeleteByIdAsync(int id);
+        void Update(Cart cart);
     }
 }

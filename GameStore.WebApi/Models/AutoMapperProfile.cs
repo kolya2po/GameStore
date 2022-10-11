@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using GameStore.BLL.Models;
+using GameStore.WebApi.Models.Cart;
 using GameStore.WebApi.Models.Comments;
 using GameStore.WebApi.Models.Games;
 using GameStore.WebApi.Models.Genres;
@@ -23,6 +19,8 @@ namespace GameStore.WebApi.Models
 
             CreateMap<CreateCommentDto, CommentModel>().ReverseMap();
             CreateMap<UpdateCommentDto, CommentModel>().ReverseMap();
+
+            CreateMap<UpdateCartDto, CartModel>().ReverseMap();
         }
     }
 }
