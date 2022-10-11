@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStore.WebApi.Controllers
@@ -46,8 +45,7 @@ namespace GameStore.WebApi.Controllers
 
             if (Request.Cookies.TryGetValue("orderId", out var orderId))
             {
-                var orderModel = await _ordersService.GetByIdAsync(Convert.ToInt32(orderId));
-                await _ordersService.UpdateOrderItems(orderModel, cart.CartItems);
+                var orderModel = await _ordersService.UpdateOrderItems(Convert.ToInt32(orderId), cart.CartItems);
 
                 return Ok(orderModel);
             }

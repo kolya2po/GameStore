@@ -28,44 +28,10 @@ namespace GameStore.BLL.Services
             return orderItems;
         }
 
-        public async Task<IEnumerable<OrderItem>> GetAllByOrderIdAsync(int orderId)
-        {
-            return await UnitOfWork.OrderItemsRepository.GetAllByOrderIdAsync(orderId);
-        }
-
         public async Task UpdateAsync(OrderModel orderModel, IEnumerable<CartItemModel> cartItems)
         {
-            var itemsFromCart = Mapper.Map<IEnumerable<OrderItem>>(cartItems).ToArray();
-
-            FindAndDeleteObsoleteOrderItems(orderModel.OrderItems, itemsFromCart);
-
-            var newItems = new List<OrderItem>();
-
-            foreach (var item in itemsFromCart)
-            {
-                item.OrderId = orderModel.Id;
-
-                var existingOrderItem = orderModel.OrderItems.FirstOrDefault(c => c.GameName == item.GameName);
-
-                if (existingOrderItem != null)
-                {
-                    existingOrderItem.Quantity = item.Quantity;
-                    continue;
-                }
-
-                newItems.Add(item);
-            }
-
-            UnitOfWork.OrderItemsRepository.CreateRange(newItems);
-            await UnitOfWork.SaveChangesAsync();
-        }
-
-        private void FindAndDeleteObsoleteOrderItems(IEnumerable<OrderItem> itemsFromOrder,
-            IEnumerable<OrderItem> itemsFromCart)
-        {
-            var itemsToDelete = itemsFromOrder.ExceptBy(itemsFromCart.Select(c => c.GameName), c => c.GameName);
-
-            UnitOfWork.OrderItemsRepository.DeleteRange(itemsToDelete);
+            UnitOfWork.OrderItemsRepository.DeleteRange(orderModel.OrderItems);
+            orderModel.OrderItems = await CreateRangeAsync(orderModel.Id, cartItems);
         }
     }
 }

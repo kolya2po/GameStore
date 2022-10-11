@@ -8,7 +8,6 @@ namespace GameStore.BLL.Interfaces
     public interface IOrderItemsService
     {
         Task<IEnumerable<OrderItem>> CreateRangeAsync(int orderId, IEnumerable<CartItemModel> cartItems);
-        Task<IEnumerable<OrderItem>> GetAllByOrderIdAsync(int orderId);
         Task UpdateAsync(OrderModel orderModel, IEnumerable<CartItemModel> cartItems);
     }
 }

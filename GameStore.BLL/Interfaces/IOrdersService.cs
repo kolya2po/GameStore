@@ -8,7 +8,7 @@ namespace GameStore.BLL.Interfaces
     {
         Task<OrderModel> CreateAsync(IEnumerable<CartItemModel> cartItems);
         Task ConfirmOrder(OrderModel orderModel);
-        Task UpdateOrderItems(OrderModel orderModel, IEnumerable<CartItemModel> cartItems);
+        Task<OrderModel> UpdateOrderItems(int orderId, IEnumerable<CartItemModel> cartItems);
         Task<OrderModel> GetByIdAsync(int id);
     }
 }

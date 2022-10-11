@@ -37,15 +37,19 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        // tvar'
-        public async Task UpdateOrderItems(OrderModel orderModel, IEnumerable<CartItemModel> cartItems)
+        public async Task<OrderModel> UpdateOrderItems(int orderId, IEnumerable<CartItemModel> cartItems)
         {
+            var orderModel = await GetByIdAsync(orderId);
+
             await _orderItemsService.UpdateAsync(orderModel, cartItems);
+
+            return orderModel;
         }
 
         public async Task<OrderModel> GetByIdAsync(int id)
         {
             var order = await UnitOfWork.OrdersRepository.GetByIdWithDetailsAsync(id);
+
             return Mapper.Map<OrderModel>(order);
         }
     }
