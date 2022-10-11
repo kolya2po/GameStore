@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities.Order;
@@ -49,6 +50,11 @@ namespace GameStore.BLL.Services
         public async Task<OrderModel> GetByIdAsync(int id)
         {
             var order = await UnitOfWork.OrdersRepository.GetByIdWithDetailsAsync(id);
+
+            if (order == null)
+            {
+                throw new GameStoreException($"Order with id {id} doesn't exist.");
+            }
 
             return Mapper.Map<OrderModel>(order);
         }
