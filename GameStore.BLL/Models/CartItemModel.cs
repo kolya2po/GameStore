@@ -1,6 +1,6 @@
 ﻿namespace GameStore.BLL.Models
 {
-    public class CartItemModel : BaseModel
+    public class CartItemModel
     {
         public int GameId { get; set; }
         public GameCartModel Game { get; set; }

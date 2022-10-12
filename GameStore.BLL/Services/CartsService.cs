@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
@@ -60,6 +61,9 @@ namespace GameStore.BLL.Services
 
         public async Task UpdateAsync(CartModel cartModel)
         {
+            var itemsToDelete = cartModel.CartItems.Where(c => c.Quantity == 0);
+
+            await _cartItemsService.DeleteRangeAsync(itemsToDelete);
             UnitOfWork.CartsRepository.Update(Mapper.Map<Cart>(cartModel));
             await UnitOfWork.SaveChangesAsync();
         }
