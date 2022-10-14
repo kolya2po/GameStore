@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.WebApi.Models.Games;
@@ -9,7 +8,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameStore.DAL.Entities;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.Authorization;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -78,8 +76,7 @@ namespace GameStore.WebApi.Controllers
                 return NotFound();
             }
 
-            await _gamesService.AddImageAsync(Mapper.Map<Game>(gameModel),
-                image, Request);
+            await _gamesService.AddImageAsync(gameModel, image, Request);
 
             return Ok();
         }
