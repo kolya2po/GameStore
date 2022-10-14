@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
+using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
@@ -63,9 +65,7 @@ namespace GameStore.BLL.Services
 
         public async Task AddImageAsync(Game game, IFormFile image, HttpRequest request)
         {
-            const string pathToFolder = @"D:\Items";
-
-            game.ImagePath = await _imagesService.SaveImageAsync(image, pathToFolder, request);
+            game.ImagePath = await _imagesService.SaveImageAsync(image, MediaPathHelper.PathToGamesImages, request);
 
             await UnitOfWork.SaveChangesAsync();
         }

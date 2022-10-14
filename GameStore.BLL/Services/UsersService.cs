@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -86,8 +87,7 @@ namespace GameStore.BLL.Services
 
         public async Task AddAvatarAsync(User user, IFormFile avatar, HttpRequest request)
         {
-            const string pathToFolder = @"D:\Items\Avatars";
-            user.AvatarImagePath = await _imagesService.SaveImageAsync(avatar, pathToFolder, request);
+            user.AvatarImagePath = await _imagesService.SaveImageAsync(avatar, MediaPathHelper.PathToUsersAvatars, request);
 
             await _userManager.UpdateAsync(user);
         }

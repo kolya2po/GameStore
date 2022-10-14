@@ -1,3 +1,4 @@
+using GameStore.BLL.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
@@ -15,7 +16,7 @@ namespace GameStore.WebApi
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseWebRoot(@"D:\Items");
+                    webBuilder.UseWebRoot(MediaPathHelper.PathToGamesImages);
                 });
     }
 }
