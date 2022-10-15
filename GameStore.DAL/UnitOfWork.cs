@@ -1,12 +1,15 @@
 ﻿using System.Threading.Tasks;
+using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
 using GameStore.DAL.Repositories;
+using Microsoft.AspNetCore.Identity;
 
 namespace GameStore.DAL
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly GameStoreDbContext _dbContext;
+        private readonly UserManager<User> _userManager;
         private GamesRepository _gamesRepository;
         private GenresRepository _genresRepository;
         private GameGenresRepository _gameGenresRepository;
@@ -15,10 +18,12 @@ namespace GameStore.DAL
         private CartItemsRepository _cartItemsRepository;
         private OrdersRepository _ordersRepository;
         private OrderItemsRepository _orderItemsRepository;
+        private UsersRepository _usersRepository;
 
-        public UnitOfWork(GameStoreDbContext dbContext)
+        public UnitOfWork(GameStoreDbContext dbContext, UserManager<User> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public IGamesRepository GamesRepository =>
@@ -40,6 +45,9 @@ namespace GameStore.DAL
 
         public IOrderItemsRepository OrderItemsRepository =>
             _orderItemsRepository ??= new OrderItemsRepository(_dbContext);
+
+        public IUsersRepository UsersRepository =>
+            _usersRepository ??= new UsersRepository(_dbContext, _userManager);
 
         public async Task SaveChangesAsync()
         {
