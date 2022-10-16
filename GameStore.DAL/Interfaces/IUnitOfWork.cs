@@ -10,6 +10,8 @@ namespace GameStore.DAL.Interfaces
         ICommentsRepository CommentsRepository { get; }
         ICartsRepository CartsRepository { get; }
         ICartItemsRepository CartItemsRepository { get; }
+        IOrdersRepository OrdersRepository { get; }
+        IOrderItemsRepository OrderItemsRepository { get; }
         Task SaveChangesAsync();
     }
 }

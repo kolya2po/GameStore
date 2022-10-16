@@ -22,6 +22,41 @@ namespace GameStore.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("GameStore.DAL.Entities.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(10,6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.CartItem", b =>
+                {
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("CartId", "GameId");
+
+                    b.HasIndex("GameId")
+                        .IsUnique();
+
+                    b.ToTable("CartItems");
+                });
+
             modelBuilder.Entity("GameStore.DAL.Entities.Comment", b =>
                 {
                     b.Property<int>("Id")
@@ -203,6 +238,116 @@ namespace GameStore.DAL.Migrations
                         {
                             Id = 15,
                             Name = "Other"
+                        });
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.Order.ContactInformation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("ContactsInformation");
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.Order.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Comments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PaymentTypeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentTypeId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.Order.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("GameDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GameName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("GamePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.Order.PaymentType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Card"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Cash"
                         });
                 });
 
@@ -416,6 +561,23 @@ namespace GameStore.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("GameStore.DAL.Entities.CartItem", b =>
+                {
+                    b.HasOne("GameStore.DAL.Entities.Cart", null)
+                        .WithMany("CartItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameStore.DAL.Entities.Game", "Game")
+                        .WithOne()
+                        .HasForeignKey("GameStore.DAL.Entities.CartItem", "GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+                });
+
             modelBuilder.Entity("GameStore.DAL.Entities.Comment", b =>
                 {
                     b.HasOne("GameStore.DAL.Entities.User", "Author")
@@ -472,6 +634,35 @@ namespace GameStore.DAL.Migrations
                         .HasForeignKey("ParentGenreId");
                 });
 
+            modelBuilder.Entity("GameStore.DAL.Entities.Order.ContactInformation", b =>
+                {
+                    b.HasOne("GameStore.DAL.Entities.Order.Order", null)
+                        .WithOne("ContactInformation")
+                        .HasForeignKey("GameStore.DAL.Entities.Order.ContactInformation", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.Order.Order", b =>
+                {
+                    b.HasOne("GameStore.DAL.Entities.Order.PaymentType", "PaymentType")
+                        .WithMany()
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PaymentType");
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.Order.OrderItem", b =>
+                {
+                    b.HasOne("GameStore.DAL.Entities.Order.Order", null)
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
@@ -523,6 +714,11 @@ namespace GameStore.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("GameStore.DAL.Entities.Cart", b =>
+                {
+                    b.Navigation("CartItems");
+                });
+
             modelBuilder.Entity("GameStore.DAL.Entities.Comment", b =>
                 {
                     b.Navigation("Replies");
@@ -540,6 +736,13 @@ namespace GameStore.DAL.Migrations
                     b.Navigation("Games");
 
                     b.Navigation("SubGenres");
+                });
+
+            modelBuilder.Entity("GameStore.DAL.Entities.Order.Order", b =>
+                {
+                    b.Navigation("ContactInformation");
+
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("GameStore.DAL.Entities.User", b =>

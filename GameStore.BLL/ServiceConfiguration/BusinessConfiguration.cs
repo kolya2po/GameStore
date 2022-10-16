@@ -23,6 +23,8 @@ namespace GameStore.BLL.ServiceConfiguration
             services.AddTransient<ICartsService, CartsService>();
             services.AddTransient<ICartItemsService, CartItemsService>();
             services.AddTransient<ICommentsService, CommentsService>();
+            services.AddTransient<IOrdersService, OrdersService>();
+            services.AddTransient<IOrderItemsService, OrderItemsService>();
 
             services.AddAutoMapper(opt => opt.AddProfile(new AutoMapperProfile()));
 

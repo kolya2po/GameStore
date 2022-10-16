@@ -24,7 +24,6 @@ namespace GameStore.WebApi.Controllers
             _genresService = genresService;
         }
 
-        [Authorize]
         [HttpGet]
         [EnableQuery]
         public async Task<ActionResult<IEnumerable<GameModel>>> GetAll()

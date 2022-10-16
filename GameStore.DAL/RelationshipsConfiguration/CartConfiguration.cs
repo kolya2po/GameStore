@@ -11,6 +11,9 @@ namespace GameStore.DAL.RelationshipsConfiguration
             builder.HasMany(c => c.CartItems)
                 .WithOne()
                 .HasForeignKey(c => c.CartId);
+
+            builder.Property(c => c.TotalPrice)
+                .HasColumnType("decimal(10, 6)");
         }
     }
 }
