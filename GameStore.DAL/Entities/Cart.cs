@@ -6,5 +6,6 @@ namespace GameStore.DAL.Entities
     {
         public IEnumerable<CartItem> CartItems { get; set; }
         public decimal TotalPrice { get; set; }
+        public string UserName { get; set; }
     }
 }

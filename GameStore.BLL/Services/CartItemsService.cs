@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
@@ -40,11 +41,10 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async Task DecreaseQuantityAsync(int cartId, int gameId)
+        public async Task DeleteRangeAsync(IEnumerable<CartItemModel> itemsToDelete)
         {
-            var cartItem = await ValidateAndGetCartItemAsync(cartId, gameId);
-
-            cartItem.Quantity--;
+            var cartItems = Mapper.Map<IEnumerable<CartItem>>(itemsToDelete);
+            UnitOfWork.CartItemsRepository.DeleteRange(cartItems);
             await UnitOfWork.SaveChangesAsync();
         }
 

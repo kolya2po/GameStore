@@ -1,4 +1,5 @@
-﻿using GameStore.DAL.Interfaces;
+﻿using System.Collections.Generic;
+using GameStore.DAL.Interfaces;
 using System.Threading.Tasks;
 using GameStore.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,11 @@ namespace GameStore.DAL.Repositories
             {
                 DbContext.CartItems.Remove(item);
             }
+        }
+
+        public void DeleteRange(IEnumerable<CartItem> cartItems)
+        {
+            DbContext.CartItems.RemoveRange(cartItems);
         }
     }
 }

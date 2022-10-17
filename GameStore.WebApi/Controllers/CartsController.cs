@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
+using GameStore.WebApi.Models.Cart;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -23,7 +24,9 @@ namespace GameStore.WebApi.Controllers
         {
             if (!Request.Cookies.TryGetValue("cartId", out var cartId))
             {
-                var cartModel = await _cartsService.CreateAsync();
+                Request.Cookies.TryGetValue("user-name", out var userName);
+
+                var cartModel = await _cartsService.CreateAsync(userName);
                 Response.Cookies.Append("cartId", cartModel.Id.ToString());
                 return Ok(cartModel);
             }
@@ -48,26 +51,20 @@ namespace GameStore.WebApi.Controllers
                 return Ok();
             }
 
-            var cartModel = await _cartsService.CreateAsync();
+            Request.Cookies.TryGetValue("user-name", out var userName);
+
+            var cartModel = await _cartsService.CreateAsync(userName);
             await _cartsService.AddGameAsync(cartModel.Id, game);
             Response.Cookies.Append("cartId", cartModel.Id.ToString());
 
             return Ok();
         }
 
-        [HttpPut("game/{gameId:int}")]
-        public async Task<ActionResult> DecreaseQuantity(int gameId)
+        [HttpPut]
+        public async Task<ActionResult> Update(UpdateCartDto model)
         {
-            var game = await _gamesService.GetByIdAsync(gameId);
-
-            if (game == null)
-            {
-                return NotFound("Game doesn't exist.");
-            }
-
-            Request.Cookies.TryGetValue("cartId", out var cartId);
-
-            await _cartsService.DecreaseQuantityAsync(Convert.ToInt32(cartId), game);
+            var cartModel = Mapper.Map<CartModel>(model);
+            await _cartsService.UpdateAsync(cartModel);
             return Ok();
         }
 

@@ -11,7 +11,8 @@ namespace GameStore.DAL.Repositories
 
         public async Task<Cart> GetByIdWithDetailsAsync(int id)
         {
-            return await DbContext.Carts.Include(c => c.CartItems)
+            return await DbContext.Carts
+                .Include(c => c.CartItems)
                 .ThenInclude(c => c.Game)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
@@ -29,6 +30,11 @@ namespace GameStore.DAL.Repositories
             {
                 DbContext.Carts.Remove(cart);
             }
+        }
+
+        public void Update(Cart cart)
+        {
+            DbContext.Carts.Update(cart);
         }
     }
 }

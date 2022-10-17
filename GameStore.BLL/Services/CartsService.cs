@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
@@ -24,9 +25,12 @@ namespace GameStore.BLL.Services
             return Mapper.Map<CartModel>(cart);
         }
 
-        public async Task<CartModel> CreateAsync()
+        public async Task<CartModel> CreateAsync(string userName)
         {
-            var cart = new Cart();
+            var cart = new Cart
+            {
+                UserName = userName
+            };
 
             await UnitOfWork.CartsRepository.CreateAsync(cart);
             await UnitOfWork.SaveChangesAsync();
@@ -55,18 +59,13 @@ namespace GameStore.BLL.Services
             await _cartItemsService.DeleteByIdAsync(cartId, gameId);
         }
 
-        public async Task DecreaseQuantityAsync(int cartId, GameModel game)
+        public async Task UpdateAsync(CartModel cartModel)
         {
-            await ValidateCartAsync(cartId);
-            var cartItemModel = await _cartItemsService.GetCartItemByIdAsync(cartId, game.Id);
+            var itemsToDelete = cartModel.CartItems.Where(c => c.Quantity == 0);
 
-            if (cartItemModel.Quantity > 1)
-            {
-                await _cartItemsService.DecreaseQuantityAsync(cartId, game.Id);
-                return;
-            }
-
-            await _cartItemsService.DeleteByIdAsync(cartId, game.Id);
+            await _cartItemsService.DeleteRangeAsync(itemsToDelete);
+            UnitOfWork.CartsRepository.Update(Mapper.Map<Cart>(cartModel));
+            await UnitOfWork.SaveChangesAsync();
         }
 
         public async Task DeleteByIdAsync(int id)
