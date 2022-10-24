@@ -34,6 +34,16 @@ namespace GameStore.WebApi
                     opt.Select().Filter();
                 });
 
+            services.AddCors(opt =>
+            {
+                opt.AddPolicy("Default", policy =>
+                {
+                    policy.AllowAnyMethod();
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyOrigin();
+                });
+            });
+
             services.AddSwaggerGen();
         }
 
@@ -59,6 +69,8 @@ namespace GameStore.WebApi
             app.UseAuthorization();
 
             app.UseMiddleware<ErrorHandlingMiddleware>();
+
+            app.UseCors("Default");
 
             app.UseEndpoints(endpoints =>
             {
