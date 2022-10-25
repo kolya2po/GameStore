@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using GameStore.BLL.Infrastructure;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.DAL.Entities;
@@ -61,13 +62,11 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddImageAsync(Game game, IFormFile image, HttpRequest request)
+        public async Task AddImageAsync(GameModel gameModel, IFormFile image, HttpRequest request)
         {
-            const string pathToFolder = @"D:\Items";
+            gameModel.ImagePath = await _imagesService.SaveImageAsync(image, MediaPathHelper.PathToGamesImages, request);
 
-            game.ImagePath = await _imagesService.SaveImageAsync(image, pathToFolder, request);
-
-            await UnitOfWork.SaveChangesAsync();
+            await UpdateAsync(gameModel);
         }
     }
 }

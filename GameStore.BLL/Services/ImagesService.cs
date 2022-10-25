@@ -13,6 +13,11 @@ namespace GameStore.BLL.Services
         {
             ValidateFile(image);
 
+            if (!Directory.Exists(pathToFolder))
+            {
+                Directory.CreateDirectory(pathToFolder);
+            }
+
             var imageFormat = image.FileName.Split('.')[^1];
 
             var imageName = $"{Guid.NewGuid()}.{imageFormat}";
