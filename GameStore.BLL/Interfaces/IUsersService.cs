@@ -10,7 +10,7 @@ namespace GameStore.BLL.Interfaces
         Task<UserModel> GetByIdAsync(int id);
         Task<UserDto> RegisterAsync(RegistrationModel model);
         Task<UserDto> LoginAsync(LoginModel model);
-        Task AddAvatarAsync(User user, IFormFile avatar, HttpRequest request);
+        Task<string> AddAvatarAsync(User user, IFormFile avatar, HttpRequest request);
         Task SignOutAsync();
     }
 }

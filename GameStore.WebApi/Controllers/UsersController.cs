@@ -51,9 +51,7 @@ namespace GameStore.WebApi.Controllers
                 return NotFound();
             }
 
-            await _userService.AddAvatarAsync(Mapper.Map<User>(userModel), avatar, Request);
-
-            return Ok();
+            return Ok(new {Path = await _userService.AddAvatarAsync(Mapper.Map<User>(userModel), avatar, Request)});
         }
     }
 }
