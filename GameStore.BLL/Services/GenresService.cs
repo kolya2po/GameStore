@@ -24,7 +24,7 @@ namespace GameStore.BLL.Services
 
         public async Task<GenreModel> GetByIdAsync(int id)
         {
-            var genre = await UnitOfWork.GenresRepository.GetByIdAsync(id);
+            var genre = await UnitOfWork.GenresRepository.GetByIdWithDetailsAsync(id);
 
             return Mapper.Map<GenreModel>(genre);
         }
