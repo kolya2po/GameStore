@@ -29,6 +29,11 @@ namespace GameStore.BLL.Services
 
             var domainName = $"{request.Scheme}://{request.Host.Value}";
 
+            if (pathToFolder == MediaPathHelper.PathToUsersAvatars)
+            {
+                domainName += "/usersAvatars";
+            }
+
             return $"{domainName}/{imageName}";
         }
 

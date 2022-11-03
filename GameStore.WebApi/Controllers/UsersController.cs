@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Interfaces;
+using GameStore.BLL.Models;
 using GameStore.BLL.Models.Identity;
 using GameStore.DAL.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ImagePathDto = GameStore.WebApi.Models.ImagePathDto;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -42,7 +44,7 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPost("{id:int}/avatar")]
-        public async Task<ActionResult> AddAvatar(int id, IFormFile avatar)
+        public async Task<ActionResult<ImagePathDto>> AddAvatar(int id, IFormFile avatar)
         {
             var userModel = await _userService.GetByIdAsync(id);
 
@@ -51,7 +53,10 @@ namespace GameStore.WebApi.Controllers
                 return NotFound();
             }
 
-            return Ok(new {Path = await _userService.AddAvatarAsync(Mapper.Map<User>(userModel), avatar, Request)});
+            return Ok(new ImagePathDto
+            {
+                Path = await _userService.AddAvatarAsync(Mapper.Map<User>(userModel), avatar, Request)
+            });
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using GameStore.DAL.Entities;
 using Microsoft.AspNetCore.OData.Query;
+using ImagePathDto = GameStore.WebApi.Models.ImagePathDto;
 
 namespace GameStore.WebApi.Controllers
 {
@@ -66,7 +67,7 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPost("{gameId:int}/image")]
-        public async Task<ActionResult> AddImage(int gameId, IFormFile image)
+        public async Task<ActionResult<ImagePathDto>> AddImage(int gameId, IFormFile image)
         {
             var gameModel = await _gamesService.GetByIdAsync(gameId);
 
@@ -75,9 +76,10 @@ namespace GameStore.WebApi.Controllers
                 return NotFound();
             }
 
-            await _gamesService.AddImageAsync(gameModel, image, Request);
-
-            return Ok();
+            return Ok(new ImagePathDto
+            {
+                Path = await _gamesService.AddImageAsync(gameModel, image, Request)
+            });
         }
 
         [HttpDelete("{id:int}")]

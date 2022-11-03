@@ -17,7 +17,6 @@ namespace GameStore.WebApi
                 {
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseWebRoot(MediaPathHelper.PathToGamesImages);
-                    webBuilder.UseWebRoot(MediaPathHelper.PathToUsersAvatars);
                 });
     }
 }
