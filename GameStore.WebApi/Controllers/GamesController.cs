@@ -51,16 +51,15 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(UpdateGameDto updateGameDto)
+        public async Task<ActionResult> Update(GameModel gameModel)
         {
-            var game = await _gamesService.GetByIdAsync(updateGameDto.Id);
+            var game = await _gamesService.GetByIdAsync(gameModel.Id);
 
             if (game == null)
             {
                 return NotFound();
             }
 
-            var gameModel = Mapper.Map<GameModel>(updateGameDto);
             await _gamesService.UpdateAsync(gameModel);
 
             return Ok();
