@@ -27,7 +27,15 @@ namespace GameStore.BLL
                     opt =>
                     opt.MapFrom(src =>
                        src.CreationDate.ToString(Thread.CurrentThread.CurrentCulture)))
+                .ForMember(dst => dst.Author,
+                    opt =>
+                        opt.MapFrom(src =>
+                            src.Author.UserName))
                 .ReverseMap();
+
+            CreateMap<CommentModel, Comment>()
+                .ForMember(dst => dst.Author, opt =>
+                    opt.Ignore());
 
             CreateMap<CartItem, CartItemModel>().ReverseMap();
 

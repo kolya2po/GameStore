@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Infrastructure;
@@ -35,6 +36,9 @@ namespace GameStore.BLL.Services
             }
 
             var gameModel = Mapper.Map<GameModel>(game);
+
+            gameModel.Comments = gameModel.Comments
+                .Where(c => c.ParentCommentId == null);
 
             return gameModel;
         }

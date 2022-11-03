@@ -8,6 +8,7 @@ namespace GameStore.BLL.Models
         public string CreationDate { get; set; }
         public int? ParentCommentId { get; set; }
         public int AuthorId { get; set; }
+        public string Author { get; set; }
         public IEnumerable<CommentModel> Replies { get; set; }
     }
 }
