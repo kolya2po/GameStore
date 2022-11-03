@@ -303,7 +303,7 @@ namespace GameStore.DAL.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
