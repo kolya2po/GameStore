@@ -12,7 +12,9 @@ namespace GameStore.DAL.Repositories
 
         public async Task<Comment> GetByIdAsync(int id)
         {
-            var comment = await DbContext.Comments.FirstOrDefaultAsync(c => c.Id == id);
+            var comment = await DbContext.Comments
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             return comment;
         }
