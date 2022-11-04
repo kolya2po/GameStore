@@ -16,8 +16,10 @@ namespace GameStore.DAL.Repositories
 
         public async Task<User> GetByIdWithDetailsAsync(int id)
         {
-            return await DbContext.Users.AsNoTracking().Include(c => c.CreatedComments).
-                Include(c => c.CreatedGames).FirstOrDefaultAsync(c => c.Id == id);
+            return await DbContext.Users.AsNoTracking()
+                .Include(c => c.CreatedComments)
+                .Include(c => c.CreatedGames)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public void Update(User user)
@@ -32,7 +34,9 @@ namespace GameStore.DAL.Repositories
 
         public async Task<User> GetByNameAsync(string userName)
         {
-            return await _userManager.FindByNameAsync(userName);
+
+            return await DbContext.Users
+                .FirstOrDefaultAsync(u => u.UserName == userName);
         }
     }
 }

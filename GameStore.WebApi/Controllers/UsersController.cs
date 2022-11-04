@@ -55,7 +55,7 @@ namespace GameStore.WebApi.Controllers
 
             return Ok(new ImagePathDto
             {
-                Path = await _userService.AddAvatarAsync(Mapper.Map<User>(userModel), avatar, Request)
+                Path = await _userService.AddAvatarAsync(userModel.Id, avatar, Request)
             });
         }
     }

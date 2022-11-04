@@ -94,8 +94,10 @@ namespace GameStore.BLL.Services
             return new UserDto { UserId = user.Id, Token = token };
         }
 
-        public async Task<string> AddAvatarAsync(User user, IFormFile avatar, HttpRequest request)
+        public async Task<string> AddAvatarAsync(int userId, IFormFile avatar, HttpRequest request)
         {
+            var user = await _unitOfWork.UsersRepository.GetByIdWithDetailsAsync(userId);
+
             var imagePath = await _imagesService.SaveImageAsync(avatar, MediaPathHelper.PathToUsersAvatars, request);
 
             user.AvatarImagePath = imagePath;
