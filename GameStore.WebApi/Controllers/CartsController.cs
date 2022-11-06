@@ -3,7 +3,6 @@ using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.WebApi.Models.Cart;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace GameStore.WebApi.Controllers
@@ -53,8 +52,6 @@ namespace GameStore.WebApi.Controllers
 
             var cartModel = await _cartsService.CreateAsync(userName);
             
-            //Response.Cookies.Append("cartId", cartModel.Id.ToString());
-
             return Ok(await _cartsService.AddGameAsync(cartModel.Id, game));
         }
 
@@ -66,11 +63,10 @@ namespace GameStore.WebApi.Controllers
             return Ok();
         }
 
-        [HttpDelete("item/{gameId:int}")]
-        public async Task<ActionResult> RemoveCartItem(int gameId)
+        [HttpDelete("{id:int}item/{gameId:int}")]
+        public async Task<ActionResult> RemoveCartItem(int id, int gameId)
         {
-            Request.Cookies.TryGetValue("cartId", out var cartId);
-            await _cartsService.RemoveItemAsync(Convert.ToInt32(cartId), gameId);
+            await _cartsService.RemoveItemAsync(id, gameId);
             return NoContent();
         }
     }
