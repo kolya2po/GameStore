@@ -38,7 +38,7 @@ namespace GameStore.BLL.Services
             return Mapper.Map<CartModel>(cart);
         }
 
-        public async Task AddGameAsync(int cartId, GameModel game)
+        public async Task<CartItemModel> AddGameAsync(int cartId, GameModel game)
         {
             await ValidateCartAsync(cartId);
 
@@ -46,12 +46,13 @@ namespace GameStore.BLL.Services
 
             if (cartItemModel == null)
             {
-                await _cartItemsService.CreateAsync(cartId, game);
-                return;
+                return await _cartItemsService.CreateAsync(cartId, game);
             }
 
             await _cartItemsService.IncreaseQuantityAsync(cartId, game.Id);
             await UnitOfWork.SaveChangesAsync();
+
+            return cartItemModel;
         }
 
         public async Task RemoveItemAsync(int cartId, int gameId)

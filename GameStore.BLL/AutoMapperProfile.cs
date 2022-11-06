@@ -38,6 +38,8 @@ namespace GameStore.BLL
                     opt.Ignore());
 
             CreateMap<CartItem, CartItemModel>().ReverseMap();
+            CreateMap<CartItemModel, CartItem>()
+                .ForMember(dst => dst.Game, opt => opt.Ignore());
 
             CreateMap<Cart, CartModel>()
                 .ForMember(dst => dst.TotalItems, opt =>

@@ -19,24 +19,23 @@ namespace GameStore.WebApi.Controllers
             _gamesService = gamesService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<CartModel>> GetCart()
+        [HttpGet("{id:int?}")]
+        public async Task<ActionResult<CartModel>> GetCart(int? id)
         {
-            if (!Request.Cookies.TryGetValue("cartId", out var cartId))
+            if (!id.HasValue)
             {
                 var userName = User.FindFirst("user-name")?.Value;
 
                 var cartModel = await _cartsService.CreateAsync(userName);
-                Response.Cookies.Append("cartId", cartModel.Id.ToString());
                 return Ok(cartModel);
             }
             
-            var cart = await _cartsService.GetByIdAsync(Convert.ToInt32(cartId));
+            var cart = await _cartsService.GetByIdAsync(id.Value);
             return Ok(cart);
         }
 
-        [HttpPost("game/{gameId:int}")]
-        public async Task<ActionResult> AddGame(int gameId)
+        [HttpPost("{id:int?}/game/{gameId:int}")]
+        public async Task<ActionResult<CartItemModel>> AddGame(int? id, int gameId)
         {
             var game = await _gamesService.GetByIdAsync(gameId);
 
@@ -45,19 +44,18 @@ namespace GameStore.WebApi.Controllers
                 return NotFound("Game doesn't exist.");
             }
 
-            if (Request.Cookies.TryGetValue("cartId", out var cartId))
+            if (id.HasValue)
             {
-                await _cartsService.AddGameAsync(Convert.ToInt32(cartId), game);
-                return Ok();
+                return Ok(await _cartsService.AddGameAsync(id.Value, game));
             }
 
             var userName = User.FindFirst("user-name")?.Value;
 
             var cartModel = await _cartsService.CreateAsync(userName);
-            await _cartsService.AddGameAsync(cartModel.Id, game);
-            Response.Cookies.Append("cartId", cartModel.Id.ToString());
+            
+            //Response.Cookies.Append("cartId", cartModel.Id.ToString());
 
-            return Ok();
+            return Ok(await _cartsService.AddGameAsync(cartModel.Id, game));
         }
 
         [HttpPut]

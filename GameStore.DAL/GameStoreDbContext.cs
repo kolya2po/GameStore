@@ -29,11 +29,11 @@ namespace GameStore.DAL
         public DbSet<ContactInformation> ContactsInformation { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(GameStoreDbContext).Assembly);
+            builder.ApplyConfigurationsFromAssembly(typeof(GameStoreDbContext).Assembly);
         }
     }
 }
