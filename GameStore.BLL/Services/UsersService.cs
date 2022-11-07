@@ -39,6 +39,14 @@ namespace GameStore.BLL.Services
 
         public async Task<UserDto> RegisterAsync(RegistrationModel model)
         {
+            var existingUser = await _unitOfWork.UsersRepository
+                .GetByUserNameAsync(model.UserName);
+
+            if (existingUser != null)
+            {
+                throw new GameStoreException($"User with {model.UserName} already exist.");
+            }
+
             var user = new User
             {
                 Email = model.Email,
@@ -60,7 +68,7 @@ namespace GameStore.BLL.Services
             await _signInManager.SignInAsync(user, false);
             var claims = new List<Claim>
             {
-                new Claim("user-name", model.UserName)
+                new ("user-name", model.UserName)
             };
 
             var token = _jwtHandler.GetJwtToken(claims);
@@ -70,7 +78,7 @@ namespace GameStore.BLL.Services
 
         public async Task<UserDto> LoginAsync(LoginModel model)
         {
-            var user = await _unitOfWork.UsersRepository.GetByNameAsync(model.UserName);
+            var user = await _unitOfWork.UsersRepository.GetByUserNameAsync(model.UserName);
 
             if (user == null)
             {
@@ -86,7 +94,7 @@ namespace GameStore.BLL.Services
 
             var claims = new List<Claim>
             {
-                new Claim("user-name", model.UserName)
+                new ("user-name", model.UserName)
             };
 
             var token = _jwtHandler.GetJwtToken(claims);

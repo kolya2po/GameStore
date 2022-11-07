@@ -32,7 +32,7 @@ namespace GameStore.DAL.Repositories
             return await _userManager.CreateAsync(user, password);
         }
 
-        public async Task<User> GetByNameAsync(string userName)
+        public async Task<User> GetByUserNameAsync(string userName)
         {
 
             return await DbContext.Users

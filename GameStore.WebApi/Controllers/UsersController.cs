@@ -1,12 +1,10 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Interfaces;
-using GameStore.BLL.Models;
 using GameStore.BLL.Models.Identity;
-using GameStore.DAL.Entities;
+using GameStore.WebApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ImagePathDto = GameStore.WebApi.Models.ImagePathDto;
 
 namespace GameStore.WebApi.Controllers
 {

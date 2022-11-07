@@ -11,7 +11,7 @@ namespace GameStore.DAL.Interfaces
         void Update(User user);
 
         Task<IdentityResult> CreateAsync(User user, string password);
-        Task<User> GetByNameAsync(string userName);
+        Task<User> GetByUserNameAsync(string userName);
 
     }
 }
