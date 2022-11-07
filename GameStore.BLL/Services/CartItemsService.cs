@@ -13,7 +13,7 @@ namespace GameStore.BLL.Services
     {
         public CartItemsService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper) { }
 
-        public async Task<CartItemModel> CreateAsync(int cartId, GameModel game)
+        public async Task CreateAsync(int cartId, GameModel game)
         {
             var cartItem = new CartItem
             {
@@ -24,8 +24,6 @@ namespace GameStore.BLL.Services
 
             await UnitOfWork.CartItemsRepository.CreateAsync(cartItem);
             await UnitOfWork.SaveChangesAsync();
-
-            return Mapper.Map<CartItemModel>(cartItem);
         }
 
         public async Task<CartItemModel> GetCartItemByIdAsync(int cartId, int gameId)

@@ -7,7 +7,7 @@ namespace GameStore.BLL.Interfaces
     {
         Task<CartModel> GetByIdAsync(int id);
         Task<CartModel> CreateAsync(string userName);
-        Task<CartItemModel> AddGameAsync(int cartId, GameModel game);
+        Task AddGameAsync(int cartId, GameModel game);
         Task RemoveItemAsync(int cartId, int gameId);
         Task UpdateAsync(CartModel cartModel);
         Task DeleteByIdAsync(int id);

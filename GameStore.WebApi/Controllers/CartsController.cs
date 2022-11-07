@@ -18,10 +18,10 @@ namespace GameStore.WebApi.Controllers
             _gamesService = gamesService;
         }
 
-        [HttpGet("{id:int?}")]
-        public async Task<ActionResult<CartModel>> GetCart(int? id)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CartModel>> GetCart(int id)
         {
-            if (!id.HasValue)
+            if (id == 0)
             {
                 var userName = User.FindFirst("user-name")?.Value;
 
@@ -29,12 +29,12 @@ namespace GameStore.WebApi.Controllers
                 return Ok(cartModel);
             }
             
-            var cart = await _cartsService.GetByIdAsync(id.Value);
+            var cart = await _cartsService.GetByIdAsync(id);
             return Ok(cart);
         }
 
-        [HttpPost("{id:int?}/game/{gameId:int}")]
-        public async Task<ActionResult<CartItemModel>> AddGame(int? id, int gameId)
+        [HttpPost("{id:int}/game/{gameId:int}")]
+        public async Task<ActionResult<CartItemModel>> AddGame(int id, int gameId)
         {
             var game = await _gamesService.GetByIdAsync(gameId);
 
@@ -43,16 +43,17 @@ namespace GameStore.WebApi.Controllers
                 return NotFound("Game doesn't exist.");
             }
 
-            if (id.HasValue)
+            if (id != 0)
             {
-                return Ok(await _cartsService.AddGameAsync(id.Value, game));
+                await _cartsService.AddGameAsync(id, game);
+                return Ok();
             }
 
             var userName = User.FindFirst("user-name")?.Value;
 
             var cartModel = await _cartsService.CreateAsync(userName);
-            
-            return Ok(await _cartsService.AddGameAsync(cartModel.Id, game));
+            await _cartsService.AddGameAsync(cartModel.Id, game);
+            return Ok();
         }
 
         [HttpPut]
@@ -63,7 +64,7 @@ namespace GameStore.WebApi.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id:int}item/{gameId:int}")]
+        [HttpDelete("{id:int}/item/{gameId:int}")]
         public async Task<ActionResult> RemoveCartItem(int id, int gameId)
         {
             await _cartsService.RemoveItemAsync(id, gameId);
