@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using GameStore.WebApi.Models;
 using Microsoft.AspNetCore.OData.Query;
-using ImagePathDto = GameStore.WebApi.Models.ImagePathDto;
+
 
 namespace GameStore.WebApi.Controllers
 {

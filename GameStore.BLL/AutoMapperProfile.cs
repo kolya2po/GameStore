@@ -13,7 +13,8 @@ namespace GameStore.BLL
         public AutoMapperProfile()
         {
             CreateMap<Game, GameModel>()
-                .ForMember(dst => dst.Genres, opt => opt.MapFrom(src => src.Genres.Select(c => c.Genre.Name)));
+                .ForMember(dst => dst.Genres, opt => opt.MapFrom(src => src.Genres.Select(c => c.Genre.Name)))
+                .ForMember(dst => dst.Comments, opt => opt.MapFrom(src => src.Comments.Where(c => c.ParentCommentId == null)));
 
             CreateMap<GameModel, Game>()
                 .ForMember(dst => dst.Genres, opt => opt.Ignore());

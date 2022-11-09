@@ -37,9 +37,6 @@ namespace GameStore.BLL.Services
 
             var gameModel = Mapper.Map<GameModel>(game);
 
-            gameModel.Comments = gameModel.Comments
-                .Where(c => c.ParentCommentId == null);
-
             return gameModel;
         }
 
