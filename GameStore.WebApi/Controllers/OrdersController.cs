@@ -56,16 +56,16 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPut("{cartId:int}")]
-        public async Task<ActionResult> ConfirmOrder(int cartId, OrderModel model)
+        public async Task<ActionResult> ConfirmOrder(int cartId, OrderModel orderModel)
         {
-            var order = await _ordersService.GetByIdAsync(model.Id);
+            var order = await _ordersService.GetByIdAsync(orderModel.Id);
 
             if (order == null)
             {
                 return NotFound("Order doesn't exist.");
             }
 
-            await _ordersService.ConfirmOrder(order);
+            await _ordersService.ConfirmOrder(orderModel);
 
             await _cartsService.DeleteByIdAsync(cartId);
 

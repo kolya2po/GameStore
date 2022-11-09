@@ -19,6 +19,7 @@ namespace GameStore.DAL.Repositories
         public async Task<Order> GetByIdWithDetailsAsync(int id)
         {
             return await DbContext.Orders
+                .AsNoTracking()
                 .Include(c => c.ContactInformation)
                 .Include(c => c.OrderItems)
                 .FirstOrDefaultAsync(c => c.Id == id);

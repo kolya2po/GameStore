@@ -11,6 +11,7 @@ namespace GameStore.BLL.Models
 
         [MaxLength(600)]
         public string Comments { get; set; }
+        public int? PaymentTypeId { get; set; }
         public string PaymentType { get; set; }
     }
 }
