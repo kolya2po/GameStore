@@ -21,16 +21,27 @@ namespace GameStore.WebApi.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<CartModel>> GetCart(int id)
         {
-            if (id == 0)
+            if (id != 0)
             {
-                var userName = User.FindFirst("user-name")?.Value;
-
-                var cartModel = await _cartsService.CreateAsync(userName);
-                return Ok(cartModel);
+                return Ok(await _cartsService.GetByIdAsync(id));
             }
-            
-            var cart = await _cartsService.GetByIdAsync(id);
-            return Ok(cart);
+
+            var userName = User.FindFirst("user-name")?.Value;
+
+            if (userName == null)
+            {
+                return Ok(await _cartsService.CreateAsync(null));
+            }
+
+            var cartModel = await _cartsService.GetByUserNameAsync(userName);
+
+            if (cartModel == null)
+            {
+                return Ok(await _cartsService.CreateAsync(userName));
+            }
+
+            return Ok(cartModel);
+
         }
 
         [HttpPost("{id:int}/game/{gameId:int}")]
@@ -51,15 +62,25 @@ namespace GameStore.WebApi.Controllers
 
             var userName = User.FindFirst("user-name")?.Value;
 
-            var cartModel = await _cartsService.CreateAsync(userName);
+            CartModel cartModel;
+
+            if (userName == null)
+            {
+                cartModel = await _cartsService.CreateAsync(null);
+                await _cartsService.AddGameAsync(cartModel.Id, game);
+                return Ok();
+            }
+
+            cartModel = await _cartsService.GetByUserNameAsync(userName);
             await _cartsService.AddGameAsync(cartModel.Id, game);
             return Ok();
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(UpdateCartDto model)
+        public async Task<ActionResult> Update(CartModel model)
         {
             var cartModel = Mapper.Map<CartModel>(model);
+            cartModel.UserName = User.FindFirst("user-name")?.Value;
             await _cartsService.UpdateAsync(cartModel);
             return Ok();
         }
