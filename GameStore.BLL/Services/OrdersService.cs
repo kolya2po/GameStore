@@ -58,5 +58,10 @@ namespace GameStore.BLL.Services
 
             return Mapper.Map<OrderModel>(order);
         }
+
+        public async Task<IEnumerable<PaymentType>> GetPaymentTypesAsync()
+        {
+            return await UnitOfWork.PaymentTypeRepository.GetAllAsync();
+        }
     }
 }

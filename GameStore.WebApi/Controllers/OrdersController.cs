@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
+using GameStore.DAL.Entities.Order;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameStore.WebApi.Controllers
@@ -31,19 +33,17 @@ namespace GameStore.WebApi.Controllers
             return Ok(order);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<OrderModel>> Create()
+        [HttpPost("{orderId:int}/cart/{cartId:int}")]
+        public async Task<ActionResult<OrderModel>> Create(int orderId, int cartId)
         {
-            Request.Cookies.TryGetValue("cartId", out var cartId);
-
-            var cart = await _cartsService.GetByIdAsync(Convert.ToInt32(cartId));
+            var cart = await _cartsService.GetByIdAsync(cartId);
 
             if (cart == null)
             {
                 return NotFound("Cart doesn't exist.");
             }
 
-            if (Request.Cookies.TryGetValue("orderId", out var orderId))
+            if (orderId != 0)
             {
                 var orderModel = await _ordersService.UpdateOrderItems(Convert.ToInt32(orderId), cart.CartItems);
 
@@ -51,13 +51,12 @@ namespace GameStore.WebApi.Controllers
             }
 
             var order = await _ordersService.CreateAsync(cart.CartItems);
-            Response.Cookies.Append("orderId", order.Id.ToString());
 
             return Ok(order);
         }
 
-        [HttpPut]
-        public async Task<ActionResult> ConfirmOrder(OrderModel model)
+        [HttpPut("{cartId:int}")]
+        public async Task<ActionResult> ConfirmOrder(int cartId, OrderModel model)
         {
             var order = await _ordersService.GetByIdAsync(model.Id);
 
@@ -68,11 +67,15 @@ namespace GameStore.WebApi.Controllers
 
             await _ordersService.ConfirmOrder(order);
 
-            var cartId = Request.Cookies["cartId"];
-            await _cartsService.DeleteByIdAsync(Convert.ToInt32(cartId));
-            Response.Cookies.Delete("cartId");
+            await _cartsService.DeleteByIdAsync(cartId);
 
             return Ok();
+        }
+
+        [HttpGet("payment-types")]
+        public async Task<ActionResult<IEnumerable<PaymentType>>> GetPaymentTypes()
+        {
+            return Ok(await _ordersService.GetPaymentTypesAsync());
         }
     }
 }

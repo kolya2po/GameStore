@@ -18,6 +18,7 @@ namespace GameStore.DAL
         private CartItemsRepository _cartItemsRepository;
         private OrdersRepository _ordersRepository;
         private OrderItemsRepository _orderItemsRepository;
+        private PaymentTypeRepository _paymentTypeRepository;
         private UsersRepository _usersRepository;
 
         public UnitOfWork(GameStoreDbContext dbContext, UserManager<User> userManager)
@@ -45,6 +46,9 @@ namespace GameStore.DAL
 
         public IOrderItemsRepository OrderItemsRepository =>
             _orderItemsRepository ??= new OrderItemsRepository(_dbContext);
+
+        public IPaymentTypeRepository PaymentTypeRepository =>
+            _paymentTypeRepository ??= new PaymentTypeRepository(_dbContext); 
 
         public IUsersRepository UsersRepository =>
             _usersRepository ??= new UsersRepository(_dbContext, _userManager);

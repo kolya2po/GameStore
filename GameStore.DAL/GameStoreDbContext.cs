@@ -28,6 +28,7 @@ namespace GameStore.DAL
         public DbSet<Order> Orders { get; set; }
         public DbSet<ContactInformation> ContactsInformation { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<PaymentType> PaymentTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
