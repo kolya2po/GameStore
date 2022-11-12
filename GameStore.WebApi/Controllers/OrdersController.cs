@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Interfaces;
@@ -45,7 +44,7 @@ namespace GameStore.WebApi.Controllers
 
             if (orderId != 0)
             {
-                var orderModel = await _ordersService.UpdateOrderItems(Convert.ToInt32(orderId), cart.CartItems);
+                var orderModel = await _ordersService.UpdateOrderItems(orderId, cart.CartItems);
 
                 return Ok(orderModel);
             }
