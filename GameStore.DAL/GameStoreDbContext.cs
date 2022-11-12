@@ -12,7 +12,7 @@ namespace GameStore.DAL
         {
 
         }
-        public GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : base(options) {}
+        public GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : base(options) { }
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
         //    base.OnConfiguring(optionsBuilder);

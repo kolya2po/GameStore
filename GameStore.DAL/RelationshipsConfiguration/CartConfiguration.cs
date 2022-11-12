@@ -13,7 +13,7 @@ namespace GameStore.DAL.RelationshipsConfiguration
                 .HasForeignKey(c => c.CartId);
 
             builder.Property(c => c.TotalPrice)
-                .HasColumnType("decimal(10, 6)");
+                .HasColumnType("decimal(15, 3)");
         }
     }
 }
