@@ -10,6 +10,5 @@ namespace GameStore.BLL.Interfaces
         Task DeleteByIdAsync(int cartId, int gameId);
         Task<CartItemModel> GetCartItemByIdAsync(int cartId, int gameId);
         Task IncreaseQuantityAsync(int cartId, int gameId);
-        Task DeleteRangeAsync(IEnumerable<CartItemModel> itemsToDelete);
     }
 }

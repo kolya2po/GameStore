@@ -31,10 +31,5 @@ namespace GameStore.DAL.Repositories
                 DbContext.CartItems.Remove(item);
             }
         }
-
-        public void DeleteRange(IEnumerable<CartItem> cartItems)
-        {
-            DbContext.CartItems.RemoveRange(cartItems);
-        }
     }
 }

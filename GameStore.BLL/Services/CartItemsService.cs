@@ -41,13 +41,6 @@ namespace GameStore.BLL.Services
             await UnitOfWork.SaveChangesAsync();
         }
 
-        public async Task DeleteRangeAsync(IEnumerable<CartItemModel> itemsToDelete)
-        {
-            var cartItems = Mapper.Map<IEnumerable<CartItem>>(itemsToDelete);
-            UnitOfWork.CartItemsRepository.DeleteRange(cartItems);
-            await UnitOfWork.SaveChangesAsync();
-        }
-
         public async Task DeleteByIdAsync(int cartId, int gameId)
         {
             await UnitOfWork.CartItemsRepository.DeleteByIdAsync(cartId, gameId);
