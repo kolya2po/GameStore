@@ -7,8 +7,7 @@ namespace GameStore.DAL.Entities
     {
         public string Text { get; set; }
         public DateTime CreationDate { get; set; }
-        public int AuthorId { get; set; }
-        public User Author { get; set; }
+        public string Author { get; set; }
         public int GameId { get; set; }
         public int? ParentCommentId { get; set; }
         public IEnumerable<Comment> Replies { get; set; }
