@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
@@ -40,7 +41,7 @@ namespace GameStore.WebApi.Controllers
             }
 
             var commentModel = Mapper.Map<CommentModel>(commentDto);
-
+            commentModel.Author = User.FindFirstValue("user-name") ?? "Guest";
             return Ok(await _commentsService.CreateCommentAsync(gameModel, commentModel));
         }
 
