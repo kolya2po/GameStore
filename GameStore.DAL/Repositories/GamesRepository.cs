@@ -62,14 +62,8 @@ namespace GameStore.DAL.Repositories
                 .Include(c => c.Genres)
                 .ThenInclude(c => c.Genre)
                 .Include(c => c.Comments)
-                .ThenInclude(c => c.Author)
-                .Include(c => c.Comments)
-                .ThenInclude(c => c.Replies)
-                .ThenInclude(r => r.Author)
-                .Include(c => c.Comments)
                 .ThenInclude(c => c.Replies)
                 .ThenInclude(r => r.Replies)
-                .ThenInclude(r => r.Author)
                 .AsSplitQuery()
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
