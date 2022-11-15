@@ -84,7 +84,7 @@ public class CartsServiceTests
     }
 
     [Test]
-    public async Task AddGameAsync_ThrowsExceptionIfCartDoesNotExist()
+    public void AddGameAsync_ThrowsExceptionIfCartDoesNotExist()
     {
         // Arrange
         const int cartId = 1;
