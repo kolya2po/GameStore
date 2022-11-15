@@ -22,6 +22,7 @@ namespace GameStore.WebApi.Controllers
         public async Task<ActionResult<CommentModel>> CreateComment(CreateCommentDto commentDto)
         {
             var gameModel = await _gamesService.GetByIdAsync(commentDto.GameId);
+            const string userNameClaim = "user-name";
 
             if (gameModel == null)
             {
@@ -41,7 +42,7 @@ namespace GameStore.WebApi.Controllers
             }
 
             var commentModel = Mapper.Map<CommentModel>(commentDto);
-            commentModel.Author = User.FindFirstValue("user-name") ?? "Guest";
+            commentModel.Author = User.FindFirstValue(userNameClaim) ?? "Guest";
             return Ok(await _commentsService.CreateCommentAsync(gameModel, commentModel));
         }
 
