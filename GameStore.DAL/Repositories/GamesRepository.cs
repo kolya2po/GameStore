@@ -34,12 +34,8 @@ namespace GameStore.DAL.Repositories
 
         public async Task DeleteByIdAsync(int id)
         {
-            var game = await DbContext.Games.FirstOrDefaultAsync(c => c.Id == id);
-
-            if (game != null)
-            {
-                DbContext.Games.Remove(game);
-            }
+            await DbContext.Database
+                .ExecuteSqlInterpolatedAsync($"EXEC deleteGameById @id={id}");
         }
 
         public void Update(Game entity)
