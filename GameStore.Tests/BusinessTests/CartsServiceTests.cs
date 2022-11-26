@@ -12,7 +12,7 @@ namespace GameStore.Tests.BusinessTests;
 public class CartsServiceTests
 {
     [Test]
-    public async Task CreateAsync_CreatesNewCart()
+    public async Task CreateAsync_ShouldCreateNewCart()
     {
         // Arrange
         var mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -30,7 +30,7 @@ public class CartsServiceTests
     }
 
     [Test]
-    public async Task AddGameAsync_AddsNewGameToCart()
+    public async Task AddGameAsync_ShouldAddNewGameToCart_WhenCartDoesNotHaveGameInIt()
     {
         // Arrange
         const int cartId = 1;
@@ -55,7 +55,7 @@ public class CartsServiceTests
     }
 
     [Test]
-    public async Task AddGameAsync_IncreaseQuantityIfCartItemExists()
+    public async Task AddGameAsync_ShouldIncreaseQuantityOfCartItem_WhenGameAlreadyInCart()
     {
         // Arrange
         const int cartId = 1;
@@ -84,7 +84,7 @@ public class CartsServiceTests
     }
 
     [Test]
-    public void AddGameAsync_ThrowsExceptionIfCartDoesNotExist()
+    public void AddGameAsync_ShouldThrowException_WhenCartDoesNotExist()
     {
         // Arrange
         const int cartId = 1;
@@ -103,7 +103,7 @@ public class CartsServiceTests
     }
 
     [Test]
-    public async Task RemoveItemAsync_RemovesCartItemFromCart()
+    public async Task RemoveItemAsync_ShouldRemoveCartItemFromCart()
     {
         // Arrange
         const int cartId = 1;
@@ -126,7 +126,7 @@ public class CartsServiceTests
     }
 
     [Test]
-    public async Task UpdateAsync_UpdatesCart()
+    public async Task UpdateAsync_ShouldUpdateCart()
     {
         // Arrange
         var mockUnitOfWork = new Mock<IUnitOfWork>();
@@ -145,7 +145,7 @@ public class CartsServiceTests
     }
 
     [Test]
-    public async Task DeleteByIdAsyncAsync_DeletesCartById()
+    public async Task DeleteByIdAsyncAsync_ShouldDeleteCartById()
     {
         // Arrange
         const int cartId = 1;
