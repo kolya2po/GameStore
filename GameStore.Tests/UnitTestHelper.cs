@@ -14,7 +14,7 @@ namespace GameStore.Tests
             return new Mapper(config);
         }
 
-        public static IEnumerable<Game> GetTestGames =>
+        public static IEnumerable<Game> TestGames =>
             new[]
             {
                 new Game
