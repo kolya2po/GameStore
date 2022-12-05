@@ -26,14 +26,12 @@ namespace GameStore.WebApi.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegistrationModel model)
         {
-            Response.Cookies.Append("user-name", model.UserName);
             return Ok(await _userService.RegisterAsync(model));
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginModel model)
         {
-            Response.Cookies.Append("user-name", model.UserName);
             return Ok(await _userService.LoginAsync(model));
 ;       }
 

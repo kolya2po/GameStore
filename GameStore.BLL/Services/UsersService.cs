@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -57,7 +58,12 @@ namespace GameStore.BLL.Services
             }
 
             await _signInManager.SignInAsync(user, false);
-            var token = _jwtHandler.GetJwtToken(Enumerable.Empty<Claim>());
+            var claims = new List<Claim>
+            {
+                new Claim("user-name", model.UserName)
+            };
+
+            var token = _jwtHandler.GetJwtToken(claims);
 
             return new UserDto {UserId = user.Id, Token = token};
         }
@@ -70,6 +76,7 @@ namespace GameStore.BLL.Services
             {
                 throw new GameStoreException($"User with username {model.UserName} doesn't exist.");
             }
+
             var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.IsPersistent, false);
 
             if (!result.Succeeded)
@@ -77,7 +84,12 @@ namespace GameStore.BLL.Services
                 throw new GameStoreException("Incorrect user's credentials.");
             }
 
-            var token = _jwtHandler.GetJwtToken(Enumerable.Empty<Claim>());
+            var claims = new List<Claim>
+            {
+                new Claim("user-name", model.UserName)
+            };
+
+            var token = _jwtHandler.GetJwtToken(claims);
 
             return new UserDto { UserId = user.Id, Token = token };
         }

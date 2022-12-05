@@ -24,7 +24,7 @@ namespace GameStore.WebApi.Controllers
         {
             if (!Request.Cookies.TryGetValue("cartId", out var cartId))
             {
-                Request.Cookies.TryGetValue("user-name", out var userName);
+                var userName = User.FindFirst("user-name")?.Value;
 
                 var cartModel = await _cartsService.CreateAsync(userName);
                 Response.Cookies.Append("cartId", cartModel.Id.ToString());
@@ -51,7 +51,7 @@ namespace GameStore.WebApi.Controllers
                 return Ok();
             }
 
-            Request.Cookies.TryGetValue("user-name", out var userName);
+            var userName = User.FindFirst("user-name")?.Value;
 
             var cartModel = await _cartsService.CreateAsync(userName);
             await _cartsService.AddGameAsync(cartModel.Id, game);
