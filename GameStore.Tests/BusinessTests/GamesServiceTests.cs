@@ -26,7 +26,7 @@ public class GamesServiceTests
     {
         // Arrange
         _mockUnitOfWork.Setup(u => u.GamesRepository.GetAllWithDetailsAsync())
-            .ReturnsAsync(UnitTestHelper.TestGames);
+            .ReturnsAsync(UnitTestHelper.GetTestGames);
 
         var expected = new List<GameModel>
         {
