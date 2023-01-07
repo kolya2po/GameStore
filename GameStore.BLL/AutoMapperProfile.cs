@@ -56,6 +56,9 @@ namespace GameStore.BLL
                     opt.MapFrom(c => c.PaymentType.Name))
                 .ReverseMap();
 
+            CreateMap<OrderModel, Order>()
+                .ForMember(dst => dst.PaymentType, opt => opt.Ignore());
+
             CreateMap<CartItemModel, OrderItem>()
                 .ForMember(dst => dst.Id, opt =>
                     opt.Ignore())

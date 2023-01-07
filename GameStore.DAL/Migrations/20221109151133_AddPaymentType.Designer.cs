@@ -4,6 +4,7 @@ using GameStore.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameStore.DAL.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    partial class GameStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221109151133_AddPaymentType")]
+    partial class AddPaymentType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,7 +288,7 @@ namespace GameStore.DAL.Migrations
                     b.Property<string>("Comments")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PaymentTypeId")
+                    b.Property<int>("PaymentTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -650,7 +652,9 @@ namespace GameStore.DAL.Migrations
                 {
                     b.HasOne("GameStore.DAL.Entities.Order.PaymentType", "PaymentType")
                         .WithMany()
-                        .HasForeignKey("PaymentTypeId");
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("PaymentType");
                 });
