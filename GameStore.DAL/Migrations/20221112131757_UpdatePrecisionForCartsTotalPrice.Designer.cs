@@ -4,6 +4,7 @@ using GameStore.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameStore.DAL.Migrations
 {
     [DbContext(typeof(GameStoreDbContext))]
-    partial class GameStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221112131757_UpdatePrecisionForCartsTotalPrice")]
+    partial class UpdatePrecisionForCartsTotalPrice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,8 +70,8 @@ namespace GameStore.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Author")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -84,6 +86,8 @@ namespace GameStore.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("GameId");
 
@@ -581,6 +585,12 @@ namespace GameStore.DAL.Migrations
 
             modelBuilder.Entity("GameStore.DAL.Entities.Comment", b =>
                 {
+                    b.HasOne("GameStore.DAL.Entities.User", "Author")
+                        .WithMany("CreatedComments")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GameStore.DAL.Entities.Game", null)
                         .WithMany("Comments")
                         .HasForeignKey("GameId")
@@ -590,6 +600,8 @@ namespace GameStore.DAL.Migrations
                     b.HasOne("GameStore.DAL.Entities.Comment", null)
                         .WithMany("Replies")
                         .HasForeignKey("ParentCommentId");
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("GameStore.DAL.Entities.Game", b =>
@@ -738,6 +750,8 @@ namespace GameStore.DAL.Migrations
 
             modelBuilder.Entity("GameStore.DAL.Entities.User", b =>
                 {
+                    b.Navigation("CreatedComments");
+
                     b.Navigation("CreatedGames");
                 });
 #pragma warning restore 612, 618

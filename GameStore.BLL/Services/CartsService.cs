@@ -69,9 +69,6 @@ namespace GameStore.BLL.Services
 
         public async Task UpdateAsync(CartModel cartModel)
         {
-            var itemsToDelete = cartModel.CartItems.Where(c => c.Quantity == 0);
-
-            await _cartItemsService.DeleteRangeAsync(itemsToDelete);
             UnitOfWork.CartsRepository.Update(Mapper.Map<Cart>(cartModel));
             await UnitOfWork.SaveChangesAsync();
         }

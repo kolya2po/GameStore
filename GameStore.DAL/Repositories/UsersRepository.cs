@@ -17,7 +17,6 @@ namespace GameStore.DAL.Repositories
         public async Task<User> GetByIdWithDetailsAsync(int id)
         {
             return await DbContext.Users.AsNoTracking()
-                .Include(c => c.CreatedComments)
                 .Include(c => c.CreatedGames)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }

@@ -14,6 +14,8 @@ namespace GameStore.DAL.Repositories
         {
             var comment = await DbContext.Comments
                 .AsNoTracking()
+                .Include(c => c.Replies)
+                .ThenInclude(c => c.Replies)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             return comment;
@@ -26,21 +28,28 @@ namespace GameStore.DAL.Repositories
 
         public async Task DeleteByIdAsync(int id)
         {
-            var comment = await DbContext.Comments
-                .Include(c => c.Replies)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var comment = await GetByIdAsync(id);
 
-            if (comment != null)
+            if (comment == null)
             {
-                if (comment.Replies != null && comment.Replies.Any())
-                {
-                    foreach (var reply in comment.Replies)
-                    {
-                        DbContext.Comments.Remove(reply);
-                    }
-                }
-                DbContext.Comments.Remove(comment);
+               return;
             }
+
+            if (comment.Replies != null && comment.Replies.Any())
+            {
+                foreach (var reply in comment.Replies)
+                {
+                    if (reply.Replies != null && reply.Replies.Any())
+                    {
+                        foreach (var replyToReply in reply.Replies)
+                        {
+                            DbContext.Comments.Remove(replyToReply);
+                        }
+                    }
+                    DbContext.Comments.Remove(reply);
+                }
+            }
+            DbContext.Comments.Remove(comment);
         }
 
         public void Update(Comment comment)

@@ -1,7 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
-using GameStore.WebApi.Models.Cart;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -11,7 +11,7 @@ namespace GameStore.WebApi.Controllers
     {
         private readonly ICartsService _cartsService;
         private readonly IGamesService _gamesService;
-
+        private const string UserNameClaim = "user-name";
         public CartsController(IMapper mapper, ICartsService cartsService, IGamesService gamesService) : base(mapper)
         {
             _cartsService = cartsService;
@@ -26,7 +26,7 @@ namespace GameStore.WebApi.Controllers
                 return Ok(await _cartsService.GetByIdAsync(id));
             }
 
-            var userName = User.FindFirst("user-name")?.Value;
+            var userName = User.FindFirstValue(UserNameClaim);
 
             if (userName == null)
             {
@@ -60,7 +60,7 @@ namespace GameStore.WebApi.Controllers
                 return Ok();
             }
 
-            var userName = User.FindFirst("user-name")?.Value;
+            var userName = User.FindFirstValue(UserNameClaim);
 
             CartModel cartModel;
 
@@ -80,7 +80,7 @@ namespace GameStore.WebApi.Controllers
         public async Task<ActionResult> Update(CartModel model)
         {
             var cartModel = Mapper.Map<CartModel>(model);
-            cartModel.UserName = User.FindFirst("user-name")?.Value;
+            cartModel.UserName = User.FindFirstValue(UserNameClaim);
             await _cartsService.UpdateAsync(cartModel);
             return Ok();
         }

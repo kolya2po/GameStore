@@ -15,10 +15,6 @@ namespace GameStore.DAL.RelationshipsConfiguration
             builder.HasOne<Game>()
                 .WithMany(c => c.Comments)
                 .HasForeignKey(c => c.GameId);
-
-            builder.HasOne(c => c.Author)
-                .WithMany(c => c.CreatedComments)
-                .HasForeignKey(c => c.AuthorId);
         }
     }
 }

@@ -21,6 +21,7 @@ namespace GameStore.BLL.Services
         public async Task<CommentModel> CreateCommentAsync(GameModel gameModel, CommentModel commentModel)
         {
             var comment = Mapper.Map<Comment>(commentModel);
+            comment.Author = commentModel.Author;
             comment.GameId = gameModel.Id;
 
             comment.CreationDate = DateTime.UtcNow;
