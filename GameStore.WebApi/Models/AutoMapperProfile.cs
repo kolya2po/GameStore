@@ -12,7 +12,6 @@ namespace GameStore.WebApi.Models
         public AutoMapperProfile()
         {
             CreateMap<CreateGameDto, GameModel>().ReverseMap();
-            CreateMap<UpdateGameDto, GameModel>().ReverseMap();
 
             CreateMap<CreateGenreDto, GenreModel>().ReverseMap();
             CreateMap<UpdateGenreDto, GenreModel>().ReverseMap();

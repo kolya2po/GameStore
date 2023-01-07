@@ -25,6 +25,14 @@ namespace GameStore.BLL.Services
             return Mapper.Map<CartModel>(cart);
         }
 
+        public async Task<CartModel> GetByUserNameAsync(string userName)
+        {
+            var cart = (await UnitOfWork.CartsRepository.GetAllWithDetailsAsync())
+                .FirstOrDefault(c => c.UserName == userName);
+
+            return Mapper.Map<CartModel>(cart);
+        }
+
         public async Task<CartModel> CreateAsync(string userName)
         {
             var cart = new Cart

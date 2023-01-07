@@ -35,6 +35,8 @@ namespace GameStore.BLL.Services
         {
             var comment = Mapper.Map<Comment>(model);
 
+            comment.CreationDate = DateTime.UtcNow;
+
             UnitOfWork.CommentsRepository.Update(comment);
             await UnitOfWork.SaveChangesAsync();
         }

@@ -13,7 +13,8 @@ namespace GameStore.BLL
         public AutoMapperProfile()
         {
             CreateMap<Game, GameModel>()
-                .ForMember(dst => dst.Genres, opt => opt.MapFrom(src => src.Genres.Select(c => c.Genre.Name)));
+                .ForMember(dst => dst.Genres, opt => opt.MapFrom(src => src.Genres.Select(c => c.Genre.Name)))
+                .ForMember(dst => dst.Comments, opt => opt.MapFrom(src => src.Comments.Where(c => c.ParentCommentId == null)));
 
             CreateMap<GameModel, Game>()
                 .ForMember(dst => dst.Genres, opt => opt.Ignore());
@@ -27,9 +28,19 @@ namespace GameStore.BLL
                     opt =>
                     opt.MapFrom(src =>
                        src.CreationDate.ToString(Thread.CurrentThread.CurrentCulture)))
+                .ForMember(dst => dst.Author,
+                    opt =>
+                        opt.MapFrom(src =>
+                            src.Author.UserName))
                 .ReverseMap();
 
+            CreateMap<CommentModel, Comment>()
+                .ForMember(dst => dst.Author, opt =>
+                    opt.Ignore());
+
             CreateMap<CartItem, CartItemModel>().ReverseMap();
+            CreateMap<CartItemModel, CartItem>()
+                .ForMember(dst => dst.Game, opt => opt.Ignore());
 
             CreateMap<Cart, CartModel>()
                 .ForMember(dst => dst.TotalItems, opt =>

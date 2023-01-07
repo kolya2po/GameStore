@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GameStore.DAL.Entities;
+using GameStore.WebApi.Models;
 using Microsoft.AspNetCore.OData.Query;
+
 
 namespace GameStore.WebApi.Controllers
 {
@@ -51,23 +52,22 @@ namespace GameStore.WebApi.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(UpdateGameDto updateGameDto)
+        public async Task<ActionResult> Update(GameModel gameModel)
         {
-            var game = await _gamesService.GetByIdAsync(updateGameDto.Id);
+            var game = await _gamesService.GetByIdAsync(gameModel.Id);
 
             if (game == null)
             {
                 return NotFound();
             }
 
-            var gameModel = Mapper.Map<GameModel>(updateGameDto);
             await _gamesService.UpdateAsync(gameModel);
 
             return Ok();
         }
 
         [HttpPost("{gameId:int}/image")]
-        public async Task<ActionResult> AddImage(int gameId, IFormFile image)
+        public async Task<ActionResult<ImagePathDto>> AddImage(int gameId, IFormFile image)
         {
             var gameModel = await _gamesService.GetByIdAsync(gameId);
 
@@ -76,9 +76,10 @@ namespace GameStore.WebApi.Controllers
                 return NotFound();
             }
 
-            await _gamesService.AddImageAsync(gameModel, image, Request);
-
-            return Ok();
+            return Ok(new ImagePathDto
+            {
+                Path = await _gamesService.AddImageAsync(gameModel, image, Request)
+            });
         }
 
         [HttpDelete("{id:int}")]

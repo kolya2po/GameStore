@@ -9,5 +9,6 @@ namespace GameStore.BLL.Models
         public IEnumerable<CartItemModel> CartItems { get; set; }
 
         public decimal TotalPrice { get; set; }
+        public string UserName { get; set; }
     }
 }

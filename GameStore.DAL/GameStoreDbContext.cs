@@ -8,7 +8,16 @@ namespace GameStore.DAL
 {
     public class GameStoreDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
+        public GameStoreDbContext()
+        {
+
+        }
         public GameStoreDbContext(DbContextOptions<GameStoreDbContext> options) : base(options) {}
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+        //    optionsBuilder.UseSqlServer("Server=KOLYAPC;Database=gamestoredb;Trusted_Connection=true;");
+        //}
 
         public DbSet<Game> Games { get; set; }
         public DbSet<GameGenre> GameGenres { get; set; }
@@ -20,11 +29,11 @@ namespace GameStore.DAL
         public DbSet<ContactInformation> ContactsInformation { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(GameStoreDbContext).Assembly);
+            builder.ApplyConfigurationsFromAssembly(typeof(GameStoreDbContext).Assembly);
         }
     }
 }

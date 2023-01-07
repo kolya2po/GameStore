@@ -6,6 +6,6 @@ namespace GameStore.BLL.Interfaces
 {
     public interface IGamesService : ICrud<GameModel>
     {
-        Task AddImageAsync(GameModel gameModel, IFormFile image, HttpRequest request);
+        Task<string> AddImageAsync(GameModel gameModel, IFormFile image, HttpRequest request);
     }
 }

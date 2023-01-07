@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GameStore.DAL.Entities;
 using GameStore.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,14 @@ namespace GameStore.DAL.Repositories
                 .Include(c => c.CartItems)
                 .ThenInclude(c => c.Game)
                 .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<IEnumerable<Cart>> GetAllWithDetailsAsync()
+        {
+            return await DbContext.Carts
+                .Include(c => c.CartItems)
+                .ThenInclude(c => c.Game)
+                .ToListAsync();
         }
 
         public async Task CreateAsync(Cart cart)

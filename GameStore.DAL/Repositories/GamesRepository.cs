@@ -57,11 +57,15 @@ namespace GameStore.DAL.Repositories
 
         public async Task<Game> GetByIdWithDetailsAsync(int id)
         {
-            return await DbContext.Games.AsNoTracking().Include(c => c.Genres)
+            return await DbContext.Games.AsNoTracking()
+                .Include(c => c.Genres)
                 .ThenInclude(c => c.Genre)
-                .ThenInclude(c => c.SubGenres)
+                .Include(c => c.Comments)
+                .ThenInclude(c => c.Author)
                 .Include(c => c.Comments)
                 .ThenInclude(c => c.Replies)
+                .ThenInclude(r => r.Author)
+                .AsSplitQuery()
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
     }

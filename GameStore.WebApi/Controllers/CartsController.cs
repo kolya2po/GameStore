@@ -3,7 +3,6 @@ using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.WebApi.Models.Cart;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace GameStore.WebApi.Controllers
@@ -19,24 +18,34 @@ namespace GameStore.WebApi.Controllers
             _gamesService = gamesService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<CartModel>> GetCart()
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<CartModel>> GetCart(int id)
         {
-            if (!Request.Cookies.TryGetValue("cartId", out var cartId))
+            if (id != 0)
             {
-                var userName = User.FindFirst("user-name")?.Value;
-
-                var cartModel = await _cartsService.CreateAsync(userName);
-                Response.Cookies.Append("cartId", cartModel.Id.ToString());
-                return Ok(cartModel);
+                return Ok(await _cartsService.GetByIdAsync(id));
             }
-            
-            var cart = await _cartsService.GetByIdAsync(Convert.ToInt32(cartId));
-            return Ok(cart);
+
+            var userName = User.FindFirst("user-name")?.Value;
+
+            if (userName == null)
+            {
+                return Ok(await _cartsService.CreateAsync(null));
+            }
+
+            var cartModel = await _cartsService.GetByUserNameAsync(userName);
+
+            if (cartModel == null)
+            {
+                return Ok(await _cartsService.CreateAsync(userName));
+            }
+
+            return Ok(cartModel);
+
         }
 
-        [HttpPost("game/{gameId:int}")]
-        public async Task<ActionResult> AddGame(int gameId)
+        [HttpPost("{id:int}/game/{gameId:int}")]
+        public async Task<ActionResult<CartItemModel>> AddGame(int id, int gameId)
         {
             var game = await _gamesService.GetByIdAsync(gameId);
 
@@ -45,34 +54,41 @@ namespace GameStore.WebApi.Controllers
                 return NotFound("Game doesn't exist.");
             }
 
-            if (Request.Cookies.TryGetValue("cartId", out var cartId))
+            if (id != 0)
             {
-                await _cartsService.AddGameAsync(Convert.ToInt32(cartId), game);
+                await _cartsService.AddGameAsync(id, game);
                 return Ok();
             }
 
             var userName = User.FindFirst("user-name")?.Value;
 
-            var cartModel = await _cartsService.CreateAsync(userName);
-            await _cartsService.AddGameAsync(cartModel.Id, game);
-            Response.Cookies.Append("cartId", cartModel.Id.ToString());
+            CartModel cartModel;
 
+            if (userName == null)
+            {
+                cartModel = await _cartsService.CreateAsync(null);
+                await _cartsService.AddGameAsync(cartModel.Id, game);
+                return Ok();
+            }
+
+            cartModel = await _cartsService.GetByUserNameAsync(userName);
+            await _cartsService.AddGameAsync(cartModel.Id, game);
             return Ok();
         }
 
         [HttpPut]
-        public async Task<ActionResult> Update(UpdateCartDto model)
+        public async Task<ActionResult> Update(CartModel model)
         {
             var cartModel = Mapper.Map<CartModel>(model);
+            cartModel.UserName = User.FindFirst("user-name")?.Value;
             await _cartsService.UpdateAsync(cartModel);
             return Ok();
         }
 
-        [HttpDelete("item/{gameId:int}")]
-        public async Task<ActionResult> RemoveCartItem(int gameId)
+        [HttpDelete("{id:int}/item/{gameId:int}")]
+        public async Task<ActionResult> RemoveCartItem(int id, int gameId)
         {
-            Request.Cookies.TryGetValue("cartId", out var cartId);
-            await _cartsService.RemoveItemAsync(Convert.ToInt32(cartId), gameId);
+            await _cartsService.RemoveItemAsync(id, gameId);
             return NoContent();
         }
     }
