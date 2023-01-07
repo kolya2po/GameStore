@@ -1,4 +1,5 @@
 ﻿using GameStore.BLL.Infrastructure;
+using GameStore.BLL.Interfaces;
 using GameStore.BLL.Models;
 using GameStore.BLL.Services;
 using GameStore.DAL.Entities;
@@ -11,89 +12,104 @@ namespace GameStore.Tests.BusinessTests;
 [TestFixture]
 public class CartsServiceTests
 {
+    private Mock<IUnitOfWork> _mockUnitOfWork = null!;
+
+    [SetUp]
+    public void InitializeUnitOfWork()
+    {
+        _mockUnitOfWork = new Mock<IUnitOfWork>();
+    }
+
     [Test]
-    public async Task CreateAsync_CreatesNewCart()
+    public async Task CreateAsync_ShouldCreateNewCart()
     {
         // Arrange
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-        mockUnitOfWork.Setup(u => u.CartsRepository.CreateAsync(It.IsAny<Cart>()));
-        var cartsService = new CartsService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+        _mockUnitOfWork.Setup(u => u.CartsRepository.CreateAsync(It.IsAny<Cart>()));
+        var cartsService = new CartsService(_mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
         const string userName = "username1";
 
         // Act
-        await cartsService.CreateAsync(userName);
+        var actual = await cartsService.CreateAsync(userName);
 
         // Assert
-        mockUnitOfWork.Verify(u => u.CartsRepository
+        Assert.That(actual.UserName, Is.EqualTo(userName));
+        _mockUnitOfWork.Verify(u => u.CartsRepository
             .CreateAsync(It.Is<Cart>(c => c.UserName == userName)), Times.Once);
-        mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
     [Test]
-    public async Task AddGameAsync_AddsNewGameToCart()
+    public async Task AddGameAsync_ShouldAddNewGameToCart_WhenCartDoesNotHaveGameInIt()
     {
         // Arrange
         const int cartId = 1;
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-        mockUnitOfWork.Setup(u => u.CartsRepository.GetByIdWithDetailsAsync(cartId))
-            .ReturnsAsync(GetTestCart);
-        mockUnitOfWork.Setup(u => u.CartItemsRepository
-            .GetByIdAsync(It.IsAny<int>(), It.IsAny<int>()));
-        mockUnitOfWork.Setup(u => u.CartItemsRepository
-            .CreateAsync(It.Is<CartItem>(opt => opt.CartId.Equals(cartId))));
+        var gameModel = new GameModel
+        {
+            Id = 1,
+            Name = "game1",
+            Description = "game1 desc",
+            Price = 100m
+        };
 
-        var cartItemsService = new CartItemsService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile());
-        var cartsService = new CartsService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), cartItemsService);
+        var mockCartItemsService = new Mock<ICartItemsService>();
+        mockCartItemsService.Setup(s => s.CreateAsync(It.IsAny<int>(), It.IsAny<GameModel>()));
+
+        // Looks like this setup is useless as GetByIdAsync is not used in AddGameAsync.
+        _mockUnitOfWork.Setup(u => u.CartsRepository.GetByIdWithDetailsAsync(cartId))
+            .ReturnsAsync(TestCart);
+
+        var cartsService = new CartsService(_mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), mockCartItemsService.Object);
 
         // Act
-        await cartsService.AddGameAsync(cartId, GetTestGameModel);
+        await cartsService.AddGameAsync(cartId, gameModel);
 
         // Assert
-        mockUnitOfWork.Verify(u => u.CartItemsRepository
-            .CreateAsync(It.Is<CartItem>(c => c.CartId == cartId)), Times.Once);
-        mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        mockCartItemsService.Verify(s => s.CreateAsync(It.Is<int>(c => c == cartId), It.Is<GameModel>(g => g.Id == gameModel.Id)), Times.Once);
     }
 
     [Test]
-    public async Task AddGameAsync_IncreaseQuantityIfCartItemExists()
+    public async Task AddGameAsync_ShouldIncreaseQuantityOfCartItem_WhenGameAlreadyInCart()
     {
         // Arrange
         const int cartId = 1;
         const int gameId = 1;
-        const int expectedQuantity = 6;
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-        mockUnitOfWork.Setup(u => u.CartsRepository.GetByIdWithDetailsAsync(cartId))
-            .ReturnsAsync(GetTestCart);
-        mockUnitOfWork.Setup(u => u.CartItemsRepository
-            .GetByIdAsync(cartId, gameId)).ReturnsAsync(GetTestCartItem);
-        mockUnitOfWork.Setup(u => u.CartItemsRepository
-            .CreateAsync(It.Is<CartItem>(opt => opt.CartId.Equals(cartId))));
+        var gameModel = new GameModel
+        {
+            Id = 1,
+            Name = "game1",
+            Description = "game1 desc",
+            Price = 100m
+        };
 
-        var cartItemsService = new CartItemsService(mockUnitOfWork.Object,
-            UnitTestHelper.CreateMapperFromProfile());
-        var cartsService = new CartsService(mockUnitOfWork.Object,
-            UnitTestHelper.CreateMapperFromProfile(), cartItemsService);
+        _mockUnitOfWork.Setup(u => u.CartsRepository.GetByIdWithDetailsAsync(cartId))
+            .ReturnsAsync(TestCart);
+
+        var mockCartItemsService = new Mock<ICartItemsService>();
+        mockCartItemsService.Setup(s => s.GetCartItemByIdAsync(cartId, gameId))
+            .ReturnsAsync(TestCartItemModel);
+        mockCartItemsService.Setup(s => s.IncreaseQuantityAsync(cartId, gameId));
+
+        var cartsService = new CartsService(_mockUnitOfWork.Object,
+            UnitTestHelper.CreateMapperFromProfile(), mockCartItemsService.Object);
 
         // Act
-        await cartsService.AddGameAsync(cartId, GetTestGameModel);
-        var cartItem = await cartItemsService.GetCartItemByIdAsync(cartId, gameId);
+        await cartsService.AddGameAsync(cartId, gameModel);
 
         // Assert
-        Assert.That(cartItem.Quantity, Is.EqualTo(expectedQuantity));
-        mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Exactly(2));
+        mockCartItemsService.Verify(s => s.IncreaseQuantityAsync(cartId, gameId), Times.Once);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
     [Test]
-    public void AddGameAsync_ThrowsExceptionIfCartDoesNotExist()
+    public void AddGameAsync_ShouldThrowException_WhenCartDoesNotExist()
     {
         // Arrange
         const int cartId = 1;
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
 
-        var cartsService = new CartsService(mockUnitOfWork.Object,
+        var cartsService = new CartsService(_mockUnitOfWork.Object,
             UnitTestHelper.CreateMapperFromProfile(), null);
-        mockUnitOfWork.Setup(u => u.CartsRepository.GetByIdWithDetailsAsync(cartId))
-            .ReturnsAsync((Cart)null);
+        _mockUnitOfWork.Setup(u => u.CartsRepository.GetByIdWithDetailsAsync(cartId))
+            .ReturnsAsync((Cart?)null);
 
         // Assert
         Assert.ThrowsAsync<GameStoreException>(async () =>
@@ -103,68 +119,65 @@ public class CartsServiceTests
     }
 
     [Test]
-    public async Task RemoveItemAsync_RemovesCartItemFromCart()
+    public async Task RemoveItemAsync_ShouldRemoveCartItemFromCart()
     {
         // Arrange
         const int cartId = 1;
         const int gameId = 1;
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-        mockUnitOfWork.Setup(u => u.CartItemsRepository.DeleteByIdAsync(It.IsAny<int>(), It.IsAny<int>()));
+        _mockUnitOfWork.Setup(u => u.CartItemsRepository.DeleteByIdAsync(It.IsAny<int>(), It.IsAny<int>()));
 
-        var cartItemsService = new CartItemsService(mockUnitOfWork.Object,
+        var cartItemsService = new CartItemsService(_mockUnitOfWork.Object,
             UnitTestHelper.CreateMapperFromProfile());
-        var cartsService = new CartsService(mockUnitOfWork.Object,
+        var cartsService = new CartsService(_mockUnitOfWork.Object,
             UnitTestHelper.CreateMapperFromProfile(), cartItemsService);
 
         // Act
         await cartsService.RemoveItemAsync(cartId, gameId);
 
         // Assert
-        mockUnitOfWork.Verify(u => u.CartItemsRepository
+        _mockUnitOfWork.Verify(u => u.CartItemsRepository
             .DeleteByIdAsync(cartId, gameId), Times.Once);
-        mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
     [Test]
-    public async Task UpdateAsync_UpdatesCart()
+    public async Task UpdateAsync_ShouldUpdateCart()
     {
         // Arrange
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-        mockUnitOfWork.Setup(u => u.CartsRepository.Update(It.IsAny<Cart>()));
+        _mockUnitOfWork.Setup(u => u.CartsRepository.Update(It.IsAny<Cart>()));
 
-        var cartsService = new CartsService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+        var cartsService = new CartsService(_mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
 
         // Act
-        await cartsService.UpdateAsync(GetTestCartModel);
+        await cartsService.UpdateAsync(TestCartModel);
 
         // Assert
-        mockUnitOfWork.Verify(u => u.CartsRepository
-            .Update(It.Is<Cart>(c => c.Id == GetTestCartModel.Id
-                                     && c.UserName == GetTestCartModel.UserName)), Times.Once);
-        mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _mockUnitOfWork.Verify(u => u.CartsRepository
+            .Update(It.Is<Cart>(c => c.Id == TestCartModel.Id
+                                     && c.UserName == TestCartModel.UserName)), Times.Once);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
     [Test]
-    public async Task DeleteByIdAsyncAsync_DeletesCartById()
+    public async Task DeleteByIdAsyncAsync_ShouldDeleteCartById()
     {
         // Arrange
         const int cartId = 1;
-        var mockUnitOfWork = new Mock<IUnitOfWork>();
-        mockUnitOfWork.Setup(u => u.CartsRepository.DeleteByIdAsync(It.IsAny<int>()));
+        _mockUnitOfWork.Setup(u => u.CartsRepository.DeleteByIdAsync(It.IsAny<int>()));
 
-        var cartsService = new CartsService(mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
+        var cartsService = new CartsService(_mockUnitOfWork.Object, UnitTestHelper.CreateMapperFromProfile(), null);
 
         // Act
         await cartsService.DeleteByIdAsync(cartId);
 
         // Assert
-        mockUnitOfWork.Verify(u => u.CartsRepository
+        _mockUnitOfWork.Verify(u => u.CartsRepository
             .DeleteByIdAsync(It.Is<int>(i => i == cartId)), Times.Once);
-        mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
+        _mockUnitOfWork.Verify(u => u.SaveChangesAsync(), Times.Once);
     }
 
 
-    private static CartItem GetTestCartItem =>
+    private static CartItemModel TestCartItemModel =>
         new()
         {
             CartId = 1,
@@ -172,23 +185,14 @@ public class CartsServiceTests
             Quantity = 5
         };
 
-    private static Cart GetTestCart =>
+    private static Cart TestCart =>
         new()
         {
             Id = 1,
             UserName = "username1"
         };
 
-    private static GameModel GetTestGameModel =>
-        new()
-        {
-            Id = 1,
-            Name = "game1",
-            Description = "game1 desc",
-            Price = 100m
-        };
-
-    private static CartModel GetTestCartModel =>
+    private static CartModel TestCartModel =>
             new ()
             {
                 Id = 1,
